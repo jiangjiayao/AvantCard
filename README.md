@@ -7,4 +7,24 @@ For Jason
 - [ ] When asking for phone numbers, which type do we prefer? Can we put 'mobile' as default?
 - [ ] cards.avant.com not working?
 - [ ] When setting up auto-pay, option to save bank info?
-- [ ] 
+
+
+
+
+For Stefan
+
+- Initial credit assignment 
+  - APR assignment
+  - Credit line assignment
+  
+- Verifications
+  - SMS/phone verification required
+  
+- Management
+  - Authorization
+    - Overlimit
+  - Credit line increase
+  - Credit line decearse
+
+
+
