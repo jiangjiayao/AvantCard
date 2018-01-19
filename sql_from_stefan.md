@@ -1,16 +1,16 @@
-tables crated:
-	cc_application
-	mla_reports
-	credit_report_details
-	cc_model_scores
-	loan_app_pre_card
-	cc_partner_offers
-	cc_offers
+# tables crated:
+- cc_application
+- mla_reports
+- credit_report_details
+- cc_model_scores
+- loan_app_pre_card
+- cc_partner_offers
+- cc_offers
 
 
 
 
-
+```
 	cc_applications ca
 	cc_model_scores ccms
 	credit_report_details crd
@@ -19,12 +19,11 @@ tables crated:
 	customer_application_events cae
 	credit_card_accounts cca
 	verification_tasks vt
+```
 
 
 
-
-
-'
+```
 With
 cc_applications as (
 -- get credit card applications from launch date and ongoing, link the loan app if it is decline path, so it can be used in decline_offer_monetization_decisions and partner_offers
@@ -556,5 +555,4 @@ where
 	and ca. customer_id<>76729523 --no Igor Simkin, Card King
 order by card_status, cc_app_stage, customer_id, ca.created_at desc
 --limit 5000
-
-'
+```

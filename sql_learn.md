@@ -33,7 +33,7 @@ WHERE
 	- https://www.interfacett.com/blogs/multiple-joins-work-just-like-single-joins/
 	- e.g. a has 100, b has 50, c has 10,
 	```
-		from a 
+		from a
 		left join b on a.uid = b.uid
 		left join c on b.uid = c.uuid
 		# 100 records after first join, 50 left after second join.
@@ -43,3 +43,4 @@ WHERE
 
 - ** nested case statements**
 	- https://community.oracle.com/thread/1066018?start=0
+	-Test
