@@ -43,4 +43,3 @@ WHERE
 
 - ** nested case statements**
 	- https://community.oracle.com/thread/1066018?start=0
-	-Test
