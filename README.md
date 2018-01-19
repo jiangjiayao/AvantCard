@@ -25,6 +25,3 @@ For Stefan
     - Overlimit
   - Credit line increase
   - Credit line decearse
-
-
-# just testing 
