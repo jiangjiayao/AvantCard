@@ -4,8 +4,17 @@ SELECT
 FROM
 	information_schema.tables
 WHERE
-	table_type='BASE TABLE' AND
-	table_schema='public''
+	table_schema='public' AND
+	table_type='BASE TABLE'
+
+
+SELECT
+	column_name
+FROM
+	information_schema.columns 
+WHERE
+	table_schema = 'credit_card_raw' AND
+	table_name   = 'account'
 ```
 
 # Sql functions
@@ -25,7 +34,9 @@ WHERE
 	- http://www.postgresqltutorial.com/postgresql-select-distinct/
 - **nulls first/last** used to ranking variables, to specify null in the top or bottom
  	- https://www.postgresql.org/docs/8.3/static/queries-order.html
-
+- **show schemas** show all schemas in current connection
+	- https://stackoverflow.com/questions/40938321/show-tables-from-all-schemas-in-presto-db
+- **show tables from [schema_name]** get all tables under a certain schema
 
 
 # Sql mechanisms
