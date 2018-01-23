@@ -1,3 +1,4 @@
+# show all tables
 ```
 SELECT
 	table_name
@@ -6,12 +7,13 @@ FROM
 WHERE
 	table_schema='public' AND
 	table_type='BASE TABLE'
-
-
+```
+# show all columns from a table
+```
 SELECT
 	column_name
 FROM
-	information_schema.columns 
+	information_schema.columns
 WHERE
 	table_schema = 'credit_card_raw' AND
 	table_name   = 'account'
