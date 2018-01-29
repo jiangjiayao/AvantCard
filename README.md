@@ -11,7 +11,7 @@ For Jason
 
 
 
-For Stefan
+From Stefan
 
 - Initial credit assignment
   - APR assignment
@@ -25,3 +25,15 @@ For Stefan
     - Overlimit
   - Credit line increase
   - Credit line decearse
+
+
+For Stefan
+- [x] Pricing strategy identifier: first digit is amf, last one is spread apr, second letter is for MLA
+    - 0001 --> $00 fee, 17.74% spread
+    - 0002 --> $00 fee, 20.74% spread
+    - 2001 --> $29 fee, 17.74% spread
+    - 2002 --> $29 fee, 20.74% spread
+    - 3001 --> $39 fee, 17.74% spread
+    - 2M01 --> $29 fee, 17.74% spread, with MLA status
+    - 3M01 --> $39 fee, 17.74% spread, with MLA status
+- [x] do we have a way to identify emerging or established customers? --> NO
