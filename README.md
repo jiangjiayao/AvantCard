@@ -3,10 +3,10 @@
 
 For Jason
 
-- [ ] Why dont give decline page when declined, why rather say '24 hrs...'
-- [ ] When asking for phone numbers, which type do we prefer? Can we put 'mobile' as default?
+- [x] Why dont give decline page when declined, why rather say '24 hrs...' softer tone.
+- [x] When asking for phone numbers, which type do we prefer? Can we put 'mobile' as default? working on it.
 - [x] cards.avant.com not working? avant.com/card --> note: only for account management
-- [ ] When setting up auto-pay, option to save bank info?
+- [x] When setting up auto-pay, option to save bank info? yes, even not enrolled in autopay.
 
 
 
