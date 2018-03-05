@@ -37,8 +37,9 @@ For Stefan
     - 2M01 --> $29 fee, 17.74% spread, with MLA status
     - 3M01 --> $39 fee, 17.74% spread, with MLA status
 - [x] Do we have a way to identify emerging or established customers? --> Sql from Igor
-- [ ] On TU report, trade vs. open_trade vs. open_trade_satisfactory
-- [ ] What is verified? e.g. Utilization for open revolving trades verified in past 12 months
-- [ ] Rating on trades? e.g. Worst rating on credit card trades in past 12 months
-- [ ] Aggregate balance vs. Total balances? e.g. AT99 vs AT33
-- [ ] What is retail trade?
+- [x] On TU report, trade vs. open_trade vs. open_trade_satisfactory --> trade: open + closed, open_trade: accts still open, open_trade_satisfactory: accts still open and not delq
+- [x] What is verified? e.g. Utilization for open revolving trades verified in past 12 months --> dont know
+- [x] Rating on trades? e.g. Worst rating on credit card trades in past 12 months --> 30 day late, 60 day late, etc
+- [x] Aggregate balance vs. Total balances? e.g. AT99 vs AT33 --> total: only for open ones
+- [x] What is retail trade? --> private label
+- [x] ${TABLE}.customer_id, which table is it referring to? --> referring to that view
