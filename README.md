@@ -36,4 +36,9 @@ For Stefan
     - 3001 --> $39 fee, 17.74% spread
     - 2M01 --> $29 fee, 17.74% spread, with MLA status
     - 3M01 --> $39 fee, 17.74% spread, with MLA status
-- [x] do we have a way to identify emerging or established customers? --> NO
+- [x] Do we have a way to identify emerging or established customers? --> Sql from Igor
+- [ ] On TU report, trade vs. open_trade vs. open_trade_satisfactory
+- [ ] What is verified? e.g. Utilization for open revolving trades verified in past 12 months
+- [ ] Rating on trades? e.g. Worst rating on credit card trades in past 12 months
+- [ ] Aggregate balance vs. Total balances? e.g. AT99 vs AT33
+- [ ] What is retail trade?
