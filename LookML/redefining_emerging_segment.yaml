@@ -1,0 +1,242 @@
+# redefining emerging segments
+
+
+
+
+
+
+
+
+
+# credit_card_prod model file
+
+  join: credit_decisions {
+    relationship: many_to_one
+    sql_on: ${credit_decisions.id} = ${customer_applications.credit_decision_id} ;;
+    fields: [credit_decisions_general*, credit_scores_fico*, credit_scores_vantage*, credit_scores_vantage3*, combined_scores*, model_scores*, underwring_details*, emerging_policy_checks*, established_policy_checks*, redefining_emerging_segment*]
+    }
+
+  join: transunion_characteristic_data {
+    relationship: one_to_one
+    sql_on: ${transunion_characteristic_data.transunion_credit_report_id}=${cd_last_decision.transunion_credit_report_id} ;;
+    fields: [id, # age_of_oldest_tradeline, age_of_newest_tradeline,
+              experience_with_credit*,
+              credit_appetite*,
+              credit_usage*,
+              performance*,
+              additional_characteristics*,
+              policy_checks*,
+              redefining_emerging_segment*
+    ]
+  }
+
+
+
+
+
+# credit_decisions view file
+
+  measure: count_distinct_fico_valid {
+    group_label: "Redefining Emerging Segment Test"
+    type: count_distinct
+    value_format_name: decimal_0
+    sql: ${transunion_credit_report_id} ;;
+    filters: {
+      field: fico_valid
+      value: "Yes"
+    }
+  }
+
+  measure: count_distinct_vantage3_valid {
+    group_label: "Redefining Emerging Segment Test"
+    type: count_distinct
+    value_format_name: decimal_0
+    sql: ${transunion_credit_report_id} ;;
+    filters: {
+      field: vantage3_valid
+      value: "Yes"
+    }
+  }
+
+
+
+
+
+
+
+# transunion_characteristic_data view file
+
+  dimension: segment_original {
+    group_label: "Redefining Emerging Segment Test"
+    type: string
+    sql:  case when (${credit_decisions.fico_score} between 350 and 850) and (${open_satisfactory_trades} >= 2) then 'established' else 'emerging' end ;;
+  }
+
+  dimension: same_segment {
+    group_label: "Redefining Emerging Segment Test"
+    type: yesno
+    sql: upper(${segment_original}) = upper(${credit_decisions.customer_segment}) ;;
+  }
+
+  dimension: number_of_mortgage_trades {
+    group_label: "Redefining Emerging Segment Test"
+    label: "MT01: Number of Mortgage Trades"
+    type: number
+    value_format_name: decimal_0
+    sql: case when (((${parsed_data}->>'00N05')::json->>'MT01')::numeric < 0)  or (((${parsed_data}->>'00N05')::json->>'MT01')::numeric = 999) then NULL else ((parsed_data->>'00N05')::json->>'MT01')::numeric end;;
+  }
+
+  dimension: number_of_active_mortgage_trades {
+    group_label: "Redefining Emerging Segment Test"
+    label: "MT02: Number of Active Mortgage Trades"
+    type: number
+    value_format_name: decimal_0
+    sql: case when (((${parsed_data}->>'00N05')::json->>'MT02')::numeric < 0)  or (((${parsed_data}->>'00N05')::json->>'MT02')::numeric = 999) then NULL else ((parsed_data->>'00N05')::json->>'MT02')::numeric end;;
+  }
+
+  dimension: number_of_satisfactory_mortgage_trades {
+    group_label: "Redefining Emerging Segment Test"
+    label: "MT03: Number of Satisfactory Mortgage Trades"
+    type: number
+    value_format_name: decimal_0
+    sql: case when (((${parsed_data}->>'00N05')::json->>'MT03')::numeric < 0)  or (((${parsed_data}->>'00N05')::json->>'MT03')::numeric = 999) then NULL else ((parsed_data->>'00N05')::json->>'MT03')::numeric end;;
+  }
+
+  dimension: avg_credit_card_balance {
+    group_label: "Redefining Emerging Segment Test"
+    label: "BC102S: Average Credit Line of Open Credit Card Trades Verified in Past 12 Months"
+    type: number
+    value_format_name: usd_0
+    sql: case when (((${parsed_data}->>'00V71')::json->>'BC102S')::numeric < 0)  or (((${parsed_data}->>'00V71')::json->>'BC102S')::numeric = 999) then NULL else ((parsed_data->>'00V71')::json->>'BC102S')::numeric end;;
+  }
+
+  dimension: number_of_premium_credit_card_trades {
+    group_label: "Redefining Emerging Segment Test"
+    label: "PB01S: Number of Premium Credit Card Trades"
+    type: number
+    value_format_name: usd_0
+    sql: case when (((${parsed_data}->>'00V71')::json->>'PB01S')::numeric < 0)  or (((${parsed_data}->>'00V71')::json->>'PB01S')::numeric = 999) then NULL else ((parsed_data->>'00V71')::json->>'PB01S')::numeric end;;
+  }
+
+  dimension: number_of_satisfactory_open_credit_card_trades {
+    group_label: "Redefining Emerging Segment Test"
+    label: "BC03S: Number of Currently Satisfactory Open Credit Card Trades"
+    type: number
+    value_format_name: usd_0
+    sql: case when (((${parsed_data}->>'00V71')::json->>'BC03S')::numeric < 0)  or (((${parsed_data}->>'00V71')::json->>'BC03S')::numeric = 999) then NULL else ((parsed_data->>'00V71')::json->>'BC03S')::numeric end;;
+  }
+
+  measure: avg_open_satisfactory_trades {
+    group_label: "Performance"
+    label: "AT24S: Average Number of Currently Open and Satisfactory Trades 6 Months or Older"
+    type: average
+    value_format_name: decimal_1
+    sql: ${open_satisfactory_trades} ;;
+  }
+
+  dimension: number_of_student_loan_trades {
+    group_label: "Redefining Emerging Segment Test"
+    label: "ST01S: Number of student loan trades"
+    type: number
+    value_format_name: decimal_1
+    sql: case when (((${parsed_data}->>'00V71')::json->>'ST01S')::numeric < 0)  or (((${parsed_data}->>'00V71')::json->>'ST01S')::numeric = 999) then NULL else ((parsed_data->>'00V71')::json->>'ST01S')::numeric end;;
+  }
+
+  dimension: number_of_open_student_loan_trades {
+    group_label: "Redefining Emerging Segment Test"
+    label: "ST02S: Number of open student loan trades"
+    type: number
+    value_format_name: decimal_1
+    sql: case when (((${parsed_data}->>'00V71')::json->>'ST02S')::numeric < 0)  or (((${parsed_data}->>'00V71')::json->>'ST02S')::numeric = 999) then NULL else ((parsed_data->>'00V71')::json->>'ST02S')::numeric end;;
+  }
+
+  dimension: number_of_satisfactory_open_student_loan_trades {
+    group_label: "Redefining Emerging Segment Test"
+    label: "ST03S: Number of currently satisfactory open student loan trades"
+    type: number
+    value_format_name: decimal_1
+    sql: case when (((${parsed_data}->>'00V71')::json->>'ST03S')::numeric < 0)  or (((${parsed_data}->>'00V71')::json->>'ST03S')::numeric = 999) then NULL else ((parsed_data->>'00V71')::json->>'ST03S')::numeric end;;
+  }
+
+  dimension: month_since_oldest_student_loan_trade {
+    group_label: "Redefining Emerging Segment Test"
+    label: "ST20S: Months since oldest student loan trade opened"
+    type: number
+    value_format_name: decimal_1
+    sql: case when (((${parsed_data}->>'00V71')::json->>'ST20S')::numeric < 0)  or (((${parsed_data}->>'00V71')::json->>'ST20S')::numeric = 999) then NULL else ((parsed_data->>'00V71')::json->>'ST20S')::numeric end;;
+  }
+
+  dimension: only_has_student_loans {
+    group_label: "Redefining Emerging Segment Test"
+    label: "ST60S: Only trade(s) is student loan(s)"
+    type: number
+    value_format_name: decimal_1
+    sql: case when (((${parsed_data}->>'00V71')::json->>'ST60S')::numeric < 0)  or (((${parsed_data}->>'00V71')::json->>'ST60S')::numeric = 999) then NULL else ((parsed_data->>'00V71')::json->>'ST60S')::numeric end;;
+  }
+
+  dimension: avg_num_month_on_file {
+    group_label: "Redefining Emerging Segment Test"
+    label: "S004S: Average number of months trades have been on file"
+    type: number
+    value_format_name: decimal_1
+    sql: case when (((${parsed_data}->>'00V71')::json->>'S004S')::numeric < 0)  or (((${parsed_data}->>'00V71')::json->>'S004S')::numeric = 999) then NULL else ((parsed_data->>'00V71')::json->>'S004S')::numeric end;;
+  }
+
+  dimension: open_to_buy_past_12_months {
+    group_label: "Redefining Emerging Segment Test"
+    label: "G202A: Total open to buy of open trades verified in past 12 months (excluding installments and mortgages)"
+    type: number
+    value_format_name: decimal_1
+    sql: case when (((${parsed_data}->>'00V71')::json->>'G202A')::numeric < 0)  or (((${parsed_data}->>'00V71')::json->>'G202A')::numeric = 999) then NULL else ((parsed_data->>'00V71')::json->>'G202A')::numeric end;;
+  }
+
+  dimension: open_to_buy_past_3_months {
+    group_label: "Redefining Emerging Segment Test"
+    label: "G201A: Total open to buy of open trades verified in past 3 months (excluding installments and mortgages)"
+    type: number
+    value_format_name: decimal_1
+    sql: case when (((${parsed_data}->>'00V71')::json->>'G201A')::numeric < 0)  or (((${parsed_data}->>'00V71')::json->>'G201A')::numeric = 999) then NULL else ((parsed_data->>'00V71')::json->>'G201A')::numeric end;;
+  }
+
+  dimension: num_of_payments_past_12_months {
+    group_label: "Redefining Emerging Segment Test"
+    label: "PAYMNT11: Number of payments in last 12 months"
+    type: number
+    value_format_name: decimal_1
+    sql: case when (((${parsed_data}->>'00W55')::json->>'PAYMNT11')::numeric < 0)  or (((${parsed_data}->>'00W55')::json->>'PAYMNT11')::numeric = 999) then NULL else ((parsed_data->>'00W55')::json->>'PAYMNT11')::numeric end;;
+  }
+
+  dimension: num_of_payments_past_3_months {
+    group_label: "Redefining Emerging Segment Test"
+    label: "PAYMNT10: Number of payments in last 3 months"
+    type: number
+    value_format_name: decimal_1
+    sql: case when (((${parsed_data}->>'00W55')::json->>'PAYMNT10')::numeric < 0)  or (((${parsed_data}->>'00W55')::json->>'PAYMNT10')::numeric = 999) then NULL else ((parsed_data->>'00W55')::json->>'PAYMNT10')::numeric end;;
+  }
+
+  dimension: max_utilization_past_12_months {
+    group_label: "Redefining Emerging Segment Test"
+    label: "AGG911: Max aggregate bankcard utilization over last 12 months"
+    type: number
+    value_format_name: decimal_1
+    sql: case when (((${parsed_data}->>'00W55')::json->>'AGG911')::numeric < 0)  or (((${parsed_data}->>'00W55')::json->>'AGG911')::numeric = 999) then NULL else ((parsed_data->>'00W55')::json->>'AGG911')::numeric end;;
+  }
+
+  dimension: max_utilization_past_3_months {
+    group_label: "Redefining Emerging Segment Test"
+    label: "AGG910: Max aggregate bankcard utilization over last 3 months"
+    type: number
+    value_format_name: decimal_1
+    sql: case when (((${parsed_data}->>'00W55')::json->>'AGG910')::numeric < 0)  or (((${parsed_data}->>'00W55')::json->>'AGG910')::numeric = 999) then NULL else ((parsed_data->>'00W55')::json->>'AGG910')::numeric end;;
+  }
+
+
+  set: redefining_emerging_segment {
+    fields: [
+      segment_original, same_segment, number_of_mortgage_trades, number_of_active_mortgage_trades, number_of_satisfactory_mortgage_trades, avg_credit_card_balance,
+      number_of_premium_credit_card_trades, number_of_satisfactory_open_credit_card_trades, avg_open_satisfactory_trades,
+      number_of_student_loan_trades, number_of_open_student_loan_trades, number_of_satisfactory_open_student_loan_trades, month_since_oldest_student_loan_trade, only_has_student_loans,
+      avg_num_month_on_file, open_to_buy_past_12_months, open_to_buy_past_3_months, num_of_payments_past_12_months, num_of_payments_past_3_months,
+      max_utilization_past_12_months, max_utilization_past_3_months
+    ]
+  }

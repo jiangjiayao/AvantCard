@@ -1,0 +1,278 @@
+
+
+
+
+
+# emerging segment rules
+  measure: total_number_of_emerging_distinct_accounts_selected {
+    group_label: "Emerging Segment Policy Checks"
+    label: "Count Distinct Emerging Accounts Selected"
+    type: count_distinct
+    value_format_name: decimal_0
+    sql: ${transunion_credit_report_id} ;;
+    filters: {
+      field: customer_segment
+      value: "Emerging"
+      }
+  }
+
+  dimension: emerging_total_trade_rule {
+    group_label: "Emerging Segment Policy Checks"
+    label: "Failed Emerging Number of Total Trades Rule"
+    description: "Fail If Total Number of Trades <= 0"
+    type: yesno
+    sql: (${customer_segment} = 'Emerging') and (${transunion_characteristic_data.total_trades} <= 0) ;;
+  }
+
+  measure: emerging_total_trade_rule_count {
+    group_label: "Emerging Segment Policy Checks"
+    label: "Count Distinct Accounts Failed Emerging Total Trade Rule"
+    type: count_distinct
+    value_format_name: decimal_0
+    sql: ${transunion_credit_report_id} ;;
+    filters: {
+      field: emerging_total_trade_rule
+      value: "yes"
+    }
+  }
+
+  measure: emerging_total_trade_rule_count_pct {
+    group_label: "Emerging Segment Policy Checks"
+    label: "Pct Distinct Accounts Failed Emerging Total Trade Rule"
+    type: number
+    value_format_name: percent_1
+    sql: 1.0 * ${emerging_total_trade_rule_count} / nullif(${total_number_of_emerging_distinct_accounts_selected}, 0);;
+  }
+
+  dimension: emerging_credit_score_rule {
+    group_label: "Emerging Segment Policy Checks"
+    label: "Failed Emerging Credit Score Rule"
+    description: "Fail If The lower valid of FICO and Vantage3 <= 549"
+    type: yesno
+    sql: (${customer_segment} = 'Emerging') and ((${combined_score_min} is null) or (${combined_score_min} <= 549)) ;;
+  }
+
+  measure: emerging_credit_score_rule_count {
+    group_label: "Emerging Segment Policy Checks"
+    label: "Count Distinct Accounts Failed Emerging Credit Score Rule"
+    type: count_distinct
+    value_format_name: decimal_0
+    sql: ${transunion_credit_report_id} ;;
+    filters: {
+      field: emerging_credit_score_rule
+      value: "yes"
+    }
+  }
+
+  measure: emerging_credit_score_rule_count_pct {
+    group_label: "Emerging Segment Policy Checks"
+    label: "Pct Distinct Accounts Failed Emerging Credit Score Rule"
+    type: number
+    value_format_name: percent_1
+    sql: 1.0 * ${emerging_credit_score_rule_count} / nullif(${total_number_of_emerging_distinct_accounts_selected}, 0);;
+  }
+
+  dimension: emerging_collection_derogatory_rule {
+    group_label: "Emerging Segment Policy Checks"
+    label: "Failed Emerging Number of Open Collection or Derogatory Rule"
+    description: "Fail If Number of Open Collection items or Derogatory Public Records >= 1"
+    type: yesno
+    sql: (${customer_segment} = 'Emerging') and (${transunion_characteristic_data.open_collections_accounts} >= 1 or ${transunion_characteristic_data.number_of_public_records} >= 1) ;;
+  }
+
+  measure: emerging_collection_derogatory_rule_count {
+    group_label: "Emerging Segment Policy Checks"
+    label: "Count Distinct Accounts Failed Emerging Number of Open Collection or Derogatory Rule"
+    type: count_distinct
+    value_format_name: decimal_0
+    sql: ${transunion_credit_report_id} ;;
+    filters: {
+      field: emerging_collection_derogatory_rule
+      value: "yes"
+    }
+  }
+
+  measure: emerging_collection_derogatory_rule_count_pct {
+    group_label: "Emerging Segment Policy Checks"
+    label: "Pct Distinct Accounts Failed Emerging Number of Open Collection or Derogatory Rule"
+    type: number
+    value_format_name: percent_1
+    sql: 1.0 * ${emerging_collection_derogatory_rule_count} / nullif(${total_number_of_emerging_distinct_accounts_selected}, 0);;
+  }
+
+  dimension: emerging_model_rule {
+    group_label: "Emerging Segment Policy Checks"
+    label: "Failed Emerging Model Score Rule"
+    description: "Fail If Model Score > 0.16"
+    type: yesno
+    sql: (${customer_segment} = 'Emerging') and (${model_decline_score} > 0.16) ;;
+  }
+
+  measure: emerging_model_rule_count {
+    group_label: "Emerging Segment Policy Checks"
+    label: "Count Distinct Accounts Failed Emerging Model Score Rule"
+    type: count_distinct
+    value_format_name: decimal_0
+    sql: ${transunion_credit_report_id} ;;
+    filters: {
+      field: emerging_model_rule
+      value: "yes"
+    }
+  }
+
+  measure: emerging_model_rule_count_pct {
+    group_label: "Emerging Segment Policy Checks"
+    label: "Pct Distinct Accounts Failed Emerging Model Score Rule"
+    type: number
+    value_format_name: percent_1
+    sql: 1.0 * ${emerging_model_rule_count} / nullif(${total_number_of_emerging_distinct_accounts_selected}, 0);;
+  }
+
+  dimension: emerging_all_rules {
+    group_label: "Emerging Segment Policy Checks"
+    label: "Failed Emerging Rules"
+    description: "Fail If Fail Any One of The Emerging Rules"
+    type: yesno
+    sql: ${emerging_total_trade_rule} or ${emerging_credit_score_rule} or ${emerging_collection_derogatory_rule} or ${emerging_model_rule} ;;
+  }
+
+  measure: emerging_all_rules_count {
+    group_label: "Emerging Segment Policy Checks"
+    label: "Count Distinct Accounts Failed Emerging Rules"
+    type: count_distinct
+    value_format_name: decimal_0
+    sql: ${transunion_credit_report_id} ;;
+    filters: {
+      field: emerging_all_rules
+      value: "yes"
+    }
+  }
+
+  measure: emerging_all_rules_count_pct {
+    group_label: "Emerging Segment Policy Checks"
+    label: "Pct Distinct Accounts Failed Emerging Rules"
+    type: number
+    value_format_name: percent_1
+    sql: 1.0 * ${emerging_all_rules_count} / nullif(${total_number_of_emerging_distinct_accounts_selected}, 0);;
+  }
+
+
+
+# established segment rules
+  measure: total_number_of_established_distinct_accounts_selected {
+    group_label: "Established Segment Policy Checks"
+    label: "Count Distinct Established Accounts Selected"
+    type: count_distinct
+    value_format_name: decimal_0
+    sql: ${transunion_credit_report_id} ;;
+    filters: {
+      field: customer_segment
+      value: "Established"
+    }
+  }
+
+  dimension: established_credit_score_rule {
+    group_label: "Established Segment Policy Checks"
+    label: "Failed Established Credit Score Rule"
+    description: "Fail If The FICO <= 549"
+    type: yesno
+    sql: (${customer_segment} = 'Established') and (${fico_score} is null) or (${fico_score} <= 549) ;;
+  }
+
+  measure: established_credit_score_rule_count {
+    group_label: "Established Segment Policy Checks"
+    label: "Count Distinct Accounts Failed Established Credit Score Rule"
+    type: count_distinct
+    value_format_name: decimal_0
+    sql: ${transunion_credit_report_id} ;;
+    filters: {
+      field: established_credit_score_rule
+      value: "yes"
+    }
+  }
+
+  measure: established_credit_score_rule_count_pct {
+    group_label: "Established Segment Policy Checks"
+    label: "Pct Distinct Accounts Failed Established Credit Score Rule"
+    type: number
+    value_format_name: percent_1
+    sql: 1.0 * ${established_credit_score_rule_count} / nullif(${total_number_of_established_distinct_accounts_selected}, 0);;
+  }
+
+  dimension: established_model_rule {
+    group_label: "Established Segment Policy Checks"
+    label: "Failed Established Model Score Rule"
+    description: "Fail If Model Score > 0.16"
+    type: yesno
+    sql: (${customer_segment} = 'Established') and (${model_decline_score} > 0.16) ;;
+  }
+
+  measure: established_model_rule_count {
+    group_label: "Established Segment Policy Checks"
+    label: "Count Distinct Accounts Failed Established Model Score Rule"
+    type: count_distinct
+    value_format_name: decimal_0
+    sql: ${transunion_credit_report_id} ;;
+    filters: {
+      field: established_model_rule
+      value: "yes"
+    }
+  }
+
+  measure: established_model_rule_count_pct {
+    group_label: "Established Segment Policy Checks"
+    label: "Pct Distinct Accounts Failed Established Model Score Rule"
+    type: number
+    value_format_name: percent_1
+    sql: 1.0 * ${established_model_rule_count} / nullif(${total_number_of_established_distinct_accounts_selected}, 0);;
+  }
+
+  dimension: established_all_rules {
+    group_label: "Established Segment Policy Checks"
+    label: "Failed Established Rules"
+    description: "Fail If Fail Any One of The Established Rules"
+    type: yesno
+    sql: ${established_credit_score_rule} or ${established_model_rule} ;;
+  }
+
+  measure: established_all_rules_count {
+    group_label: "Established Segment Policy Checks"
+    label: "Count Distinct Accounts Failed Established Rules"
+    type: count_distinct
+    value_format_name: decimal_0
+    sql: ${transunion_credit_report_id} ;;
+    filters: {
+      field: established_all_rules
+      value: "yes"
+    }
+  }
+
+  measure: established_all_rules_count_pct {
+    group_label: "Established Segment Policy Checks"
+    label: "Pct Distinct Accounts Failed Established Rules"
+    type: number
+    value_format_name: percent_1
+    sql: 1.0 * ${established_all_rules_count} / nullif(${total_number_of_established_distinct_accounts_selected}, 0);;
+  }
+
+
+
+  set: emerging_policy_checks {
+    fields: [
+      total_number_of_emerging_distinct_accounts_selected,
+      emerging_total_trade_rule, emerging_total_trade_rule_count, emerging_total_trade_rule_count_pct,
+      emerging_credit_score_rule, emerging_credit_score_rule_count, emerging_credit_score_rule_count_pct,
+      emerging_collection_derogatory_rule, emerging_collection_derogatory_rule_count, emerging_collection_derogatory_rule_count_pct,
+      emerging_model_rule, emerging_all_rules_count, emerging_model_rule_count_pct,
+      emerging_all_rules, emerging_all_rules_count, emerging_all_rules_count_pct
+    ]
+  }
+
+  set: established_policy_checks {
+    fields: [
+      total_number_of_established_distinct_accounts_selected,
+      established_credit_score_rule, established_credit_score_rule_count, established_credit_score_rule_count_pct,
+      established_model_rule, established_all_rules_count, established_model_rule_count_pct,
+      established_all_rules, established_all_rules_count, established_all_rules_count_pct
+    ]
+  }

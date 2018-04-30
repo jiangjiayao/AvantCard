@@ -1,0 +1,30 @@
+
+
+
+
+
+
+
+
+
+
+
+  dimension: days_since_issued {
+    description: "Number of Days Since Account Issued as of Each Measurement Date"
+    type: number
+    sql: case when date_diff('day', DATE(${api_account.created_at_date}), DATE(${measurement_date})) < 0 then null
+      else date_diff('day', DATE(${api_account.created_at_date}), DATE(${measurement_date})) end;;
+  }
+
+  measure: count_distinct_accounts_debit_active {
+    description: "Accounts Considered Debit Active If Purchase or Cash Advance Ever Occurred"
+    type: count_distinct
+    sql: case when (${purchases_to_date} > 0 OR ${cash_advances_to_date} > 0) THEN ${first_data_account_reference} END;;
+  }
+
+  measure: pct_distinct_accounts_debit_active {
+    description: "Percentage of Accounts Debit Active"
+    type: number
+    value_format_name: percent_1
+    sql: 1.0 * ${count_distinct_accounts_debit_active} / nullif(${count_distinct_accounts}, 0);;
+  }

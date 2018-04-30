@@ -1,0 +1,678 @@
+	((tcd.parsed_data->>'00W63')::json->>'OPENBKC')::int open_bankruptcy
+	((tcd.parsed_data->>'00V71')::json->>'AT24S')::int open_satisfactory_trades
+#	((tcd.parsed_data->>'00V71')::json->>'G093S')::int number_of_public_records
+	((tcd.parsed_data->>'00V71')::json->>'G215A')::int open_collections_accounts
+#	((tcd.parsed_data->>'00V71')::json->>'AT01S')::int total_trades
+	((tcd.parsed_data->>'00V71')::json->>'G960S')::int total_credit_inquires
+#	((tcd.parsed_data->>'00V71')::json->>'G980S')::int credit_inquiries_last_6_months
+#	((tcd.parsed_data->>'00V71')::json->>'G990S')::int credit_inquiries_last_12_months
+	((tcd.parsed_data->>'00V71')::json->>'G231S')::int collections_inquiries
+	((tcd.parsed_data->>'00V71')::json->>'G233S')::int collections_inquiries_last_6_months
+#	((tcd.parsed_data->>'00V71')::json->>'G099S')::int bankruptcies_last_24_months
+#	((tcd.parsed_data->>'00V71')::json->>'G094S')::int count_bankruptcies
+	((tcd.parsed_data->>'00V71')::json->>'S064A')::int total_amount_collections
+	((tcd.parsed_data->>'00V71')::json->>'S064B')::int total_amount_non_medical_collections
+	((tcd.parsed_data->>'00V71')::json->>'S208S')::int tax_liens
+#	((tcd.parsed_data->>'00V71')::json->>'S207S')::int months_since_most_recent_public_record_bankruptcy
+#	((tcd.parsed_data->>'00V71')::json->>'AT20S')::int age_oldest_trade_months
+#	((tcd.parsed_data->>'00V71')::json->>'AT21S')::int age_newest_trade_months
+	((tcd.parsed_data->>'00V71')::json->>'FI02S')::int open_finance_installment_trades
+	((tcd.parsed_data->>'00V71')::json->>'G104S')::int months_since_most_recent_collections_inquiry
+	((tcd.parsed_data->>'00V71')::json->>'G103S')::int months_since_most_recent_credit_inquiry
+	((tcd.parsed_data->>'00V71')::json->>'AT101B')::int total_balance_excluding_housing
+	((tcd.parsed_data->>'00V71')::json->>'BC101S')::int total_credit_card_balance
+	((tcd.parsed_data->>'00V71')::json->>'BC31S')::int percentage_of_open_cc_with75p_util
+#	((tcd.parsed_data->>'00V71')::json->>'BC34S')::int utilization_credit_card
+	((tcd.parsed_data->>'00W63')::json->>'ATTR03')::int late30
+
+
+
+# Sample code
+
+# dimension:  {
+#     label: " "
+#     group_label: " "
+#     description: " "
+#     type:
+#     sql: ;;
+# }
+
+
+# measure: {
+#     label: " "
+#     group_label: " "
+#     description: " "
+#     type: min/max/average/median/percentile
+#     percentile: 05/25/...
+#     sql: ;;
+# }
+
+
+# Experience With Credit
+    # all tradelines
+    dimension: Number_of_Trade {
+        group_label: "Experience With Credit"
+        description: "Number of trades: AT01S"
+        type: number
+        sql: case when (((${parsed_data}->>'00V71')::json->>'AT01S') < 0)  or (((${parsed_data}->>'00V71')::json->>'AT01S') = 999) then NULL else ((${parsed_data}->>'00V71')::json->>'AT01S') ;;
+    }
+
+    measure: Average_Number_of_Trade {
+        group_label: "Experience With Credit"
+        description: "Average of (Number of trades: AT01S) for selected accounts"
+        type: average
+        sql: ${Number_of_Trade} ;;
+    }
+
+    dimension: Month_Since_Oldest_Trade {
+        group_label: "Experience With Credit"
+        description: "Months since oldest trade opened: AT20S"
+        type: number
+        sql: case when (((${parsed_data}->>'00V71')::json->>'AT20S') < 0)  or (((${parsed_data}->>'00V71')::json->>'AT20S') = 999) then NULL else ((${parsed_data}->>'00V71')::json->>'AT20S') ;;
+    }
+
+    dimension: Month_Since_Newest_Trade {
+        group_label: "Experience With Credit"
+        description: "Months since most recent trade opened: AT21S"
+        type: number
+        sql: case when (((${parsed_data}->>'00V71')::json->>'AT21S') < 0)  or (((${parsed_data}->>'00V71')::json->>'AT21S') = 999) then NULL else ((${parsed_data}->>'00V71')::json->>'AT21S') ;;
+    }
+
+    # credit cards
+    dimension: Number_of_CreditCard {
+        group_label: "Experience With Credit"
+        description: "Number of credit card trades: BC01S"
+        type: number
+        sql: case when (((${parsed_data}->>'00V71')::json->>'BC01S') < 0)  or (((${parsed_data}->>'00V71')::json->>'BC01S') = 999) then NULL else ((${parsed_data}->>'00V71')::json->>'BC01S') ;;
+    }
+
+    measure: Average_Number_of_CreditCard {
+        group_label: "Experience With Credit"
+        description: "Average of (Number of credit card trades: BC01S) for selected accounts"
+        type: average
+        sql: ${Number_of_CreditCard} ;;
+    }
+
+    dimension: Month_Since_Oldest_CreditCard {
+        group_label: "Experience With Credit"
+        description: "Months since oldest credit card trade opened: BC20S"
+        type: number
+        sql: case when (((${parsed_data}->>'00V71')::json->>'BC20S') < 0)  or (((${parsed_data}->>'00V71')::json->>'BC20S') = 999) then NULL else ((${parsed_data}->>'00V71')::json->>'BC20S') ;;
+    }
+
+    dimension: Month_Since_Newest_CreditCard {
+        group_label: "Experience With Credit"
+        description: "Months since most recent credit card trade opened: BC21S"
+        type: number
+        sql: case when (((${parsed_data}->>'00V71')::json->>'BC21S') < 0)  or (((${parsed_data}->>'00V71')::json->>'BC21S') = 999) then NULL else ((${parsed_data}->>'00V71')::json->>'BC21S') ;;
+    }
+
+    # customer age
+    dimension: Age_of_Customer {
+        group_label: "Experience With Credit"
+        description: "Age of customer on application, calculated number based on user input"
+        type: number
+        sql: round((current_date-NULLIF(split_part(split_part(information,'date_of_birth: ',2),E'\n',1),'')::date)/365::numeric,1) ;;
+    }
+
+    measure: Average_Age_of_Customer {
+        group_label: "Experience With Credit"
+        description: "Average of (Age of customer on application) for selected accounts"
+        type: average
+        sql: ${Age_of_Customer} ;;
+    }
+
+
+
+# Credit Apatite
+    # Number of inquiries in the past ...
+    dimension: Trade_Past_3_month {
+        group_label: "Credit Apatite"
+        description: "Number of trades opened in 3 months: AT05"
+        type: number
+        sql: case when (((${parsed_data}->>'00V71')::json->>'AT05') < 0)  or (((${parsed_data}->>'00V71')::json->>'AT05') = 999) then NULL else ((${parsed_data}->>'00V71')::json->>'AT05') ;;
+        ## per Stefan, but will check with him again
+    }
+
+    measure: Average_Trade_Past_3_month {
+        group_label: "Credit Apatite"
+        description: "Average of (Number of trades opened in 3 months: AT05) for selected accounts"
+        type: average
+        sql: ${Trade_Past_3_month} ;;
+    }
+
+    dimension: Inquiries_Past_6_month {
+        group_label: "Credit Apatite"
+        description: "Number of credit inquiries in past 6 months: G237S"
+        type: number
+        sql: case when (((${parsed_data}->>'00V71')::json->>'G237S') < 0)  or (((${parsed_data}->>'00V71')::json->>'G237S') = 999) then NULL else ((${parsed_data}->>'00V71')::json->>'G237S') ;;
+    }
+
+    measure: Average_Inquiries_Past_6_month {
+        group_label: "Credit Apatite"
+        description: "Average of (Number of credit inquiries in past 6 months: G237S) for selected accounts"
+        type: average
+        sql: ${Inquiries_Past_6_month} ;;
+    }
+
+    dimension: Inquiries_Past_12_month {
+        group_label: "Credit Apatite"
+        description: "Number of credit inquiries in past 12 months: G238S"
+        type: number
+        sql: case when (((${parsed_data}->>'00V71')::json->>'G238S') < 0)  or (((${parsed_data}->>'00V71')::json->>'G238S') = 999) then NULL else ((${parsed_data}->>'00V71')::json->>'G238S') ;;
+    }
+
+    measure: Average_Inquiries_Past_12_month {
+        group_label: "Credit Apatite"
+        description: "Average of (Number of credit inquiries in past 12 months: G238S) for selected accounts"
+        type: average
+        sql: ${Inquiries_Past_12_month} ;;
+    }
+
+    dimension: Inquiries_Past_24_month {
+        group_label: "Credit Apatite"
+        description: "Number of deduped inquiries: CV14"
+        type: number
+        sql: case when (((${parsed_data}->>'00V71')::json->>'CV14') < 0)  or (((${parsed_data}->>'00V71')::json->>'CV14') = 999) then NULL else ((${parsed_data}->>'00V71')::json->>'CV14') ;;
+    }
+
+    # recent accounts/credit cards
+    dimension: Trade_Past_6_month {
+        group_label: "Credit Apatite"
+        description: "Number of trades opened in past 6 months: AT06S"
+        type: number
+        sql: case when (((${parsed_data}->>'00V71')::json->>'AT06S') < 0)  or (((${parsed_data}->>'00V71')::json->>'AT06S') = 999) then NULL else ((${parsed_data}->>'00V71')::json->>'AT06S') ;;
+    }
+
+    measure: Average_Trade_Past_6_month {
+        group_label: "Credit Apatite"
+        description: "Average of (Number of trades opened in past 6 months: AT06S) for selected accounts"
+        type: average
+        sql: ${Trade_Past_6_month} ;;
+    }
+
+    dimension: CreditCard_Past_6_month {
+        group_label: "Credit Apatite"
+        description: "Number of credit card trades opened in past 6 months: BC06S"
+        type: number
+        sql: case when (((${parsed_data}->>'00V71')::json->>'BC06S') < 0)  or (((${parsed_data}->>'00V71')::json->>'BC06S') = 999) then NULL else ((${parsed_data}->>'00V71')::json->>'BC06S') ;;
+    }
+
+    measure: Average_CreditCard_Past_6_month {
+        group_label: "Credit Apatite"
+        description: "Average of (Number of credit card trades opened in past 6 months: BC06S) for selected accounts"
+        type: average
+        sql: ${CreditCard_Past_6_month} ;;
+    }
+
+
+
+# Credit Usage
+    # Utilization of revolvers
+    dimension: Utilization_Of_Revolver_Past_12_Month {
+        group_label: "Credit Usage"
+        description: "Utilization for open revolving trades verified in past 12 months: RE34S"
+        type: number
+        sql: case when (((${parsed_data}->>'00V71')::json->>'RE34S') < 0)  or (((${parsed_data}->>'00V71')::json->>'RE34S') = 999) then NULL else ((${parsed_data}->>'00V71')::json->>'RE34S') ;;
+    }
+
+    measure: Average_Utilization_Of_Revolver_Past_12_Month {
+        group_label: "Credit Usage"
+        description: "Average of (Utilization for open revolving trades verified in past 12 months: RE34S) for selected accounts"
+        type: average
+        sql: ${Utilization_Of_Revolver_Past_12_Month} ;;
+    }
+
+    # utilization of credit cards
+    dimension: Utilization_Of_CreditCard_Past_12_Month {
+        group_label: "Credit Usage"
+        description: "Utilization for open credit card trades verified in past 12 months: BC34S"
+        type: number
+        sql: case when (((${parsed_data}->>'00V71')::json->>'BC34S') < 0)  or (((${parsed_data}->>'00V71')::json->>'BC34S') = 999) then NULL else ((${parsed_data}->>'00V71')::json->>'BC34S') ;;
+    }
+
+    measure: Average_Utilization_Of_CreditCard_Past_12_Month {
+        group_label: "Credit Usage"
+        description: "Average of (Utilization for open credit card trades verified in past 12 months: BC34S) for selected accounts"
+        type: average
+        sql: ${Utilization_Of_CreditCard_Past_12_Month} ;;
+    }
+
+    # overall balance & limit (including mortgage & loans)
+    dimension:  Overall_Balance {
+        group_label: "Credit Usage"
+        description: "Total balance of open trades verified in past 12 months: AT33A"
+        type: number
+        sql: case when (((${parsed_data}->>'00V71')::json->>'AT33A') < 0)  or (((${parsed_data}->>'00V71')::json->>'AT33A') = 999) then NULL else ((${parsed_data}->>'00V71')::json->>'AT33A') ;;
+    }
+
+    measure: Average_Balance {
+        group_label: "Credit Usage"
+        description: "Average of (Total balance of open trades verified in past 12 months: AT33A) for selected accounts"
+        type: average
+        sql: ${Overall_Balance} ;;
+    }
+
+    dimension: Overall_Limit {
+        group_label: "Credit Usage"
+        description: "Total credit line of open trades verified in past 12 months: AT28A"
+        type: number
+        sql: case when (((${parsed_data}->>'00V71')::json->>'AT28A') < 0)  or (((${parsed_data}->>'00V71')::json->>'AT28A') = 999) then NULL else ((${parsed_data}->>'00V71')::json->>'AT28A') ;;
+    }
+
+    measure: Average_Limit {
+        group_label: "Credit Usage"
+        description: "Average of (Total credit line of open trades verified in past 12 months: AT28A) for selected accounts"
+        type: average
+        sql: ${Overall_Limit} ;;
+    }
+
+    # overall balance & limit (without mortgage & home equity)
+    dimension: Overall_Balance_without_mortgage {
+        group_label: "Credit Usage"
+        description: "Total balance of open trades verified in past 12 months (excluding mortgage and home equity): AT33B"
+        type: number
+        sql: case when (((${parsed_data}->>'00V71')::json->>'AT33B') < 0)  or (((${parsed_data}->>'00V71')::json->>'AT33B') = 999) then NULL else ((${parsed_data}->>'00V71')::json->>'AT33B') ;;
+    }
+
+    measure: Average_Balance_without_mortgage {
+        group_label: "Credit Usage"
+        description: "Average of (Total balance of open trades verified in past 12 months (excluding mortgage and home equity): AT33B) for selected accounts"
+        type: average
+        sql: ${Overall_Balance_without_mortgage} ;;
+    }
+
+    dimension: Overall_Limit_without_mortgage {
+        group_label: "Credit Usage"
+        description: "Total credit line of open trades verified in past 12 months (excluding mortgage and home equity): AT28B"
+        type: number
+        sql: case when (((${parsed_data}->>'00V71')::json->>'AT28B') < 0)  or (((${parsed_data}->>'00V71')::json->>'AT28B') = 999) then NULL else ((${parsed_data}->>'00V71')::json->>'AT28B') ;;
+    }
+
+    measure: Average_Limit_without_mortgage {
+        group_label: "Credit Usage"
+        description: "Average of (Total credit line of open trades verified in past 12 months (excluding mortgage and home equity): AT28B) for selected accounts"
+        type: average
+        sql: ${Overall_Limit_without_mortgage} ;;
+    }
+
+    # number of cards, balance & limit for all cards
+    dimension: Number_Of_Cards {
+        group_label: "Credit Usage"
+        description: "Number of open credit card trades: BC02S"
+        type: number
+        sql: case when (((${parsed_data}->>'00V71')::json->>'BC02S') < 0)  or (((${parsed_data}->>'00V71')::json->>'BC02S') = 999) then NULL else ((${parsed_data}->>'00V71')::json->>'BC02S') ;;
+    }
+
+    measure: Average_Number_Of_Cards {
+        group_label: "Credit Usage"
+        description: "Average of (Number of open credit card trades: BC02S) for selected accounts"
+        type: average
+        sql: ${Number_Of_Cards} ;;
+    }
+
+    dimension: Overall_CreditCard_Balance {
+        group_label: "Credit Usage"
+        description: "Total balance of open credit card trades verified in past 12 months: BC33S"
+        type: number
+        sql: case when (((${parsed_data}->>'00V71')::json->>'BC33S') < 0)  or (((${parsed_data}->>'00V71')::json->>'BC33S') = 999) then NULL else ((${parsed_data}->>'00V71')::json->>'BC33S') ;;
+    }
+
+    measure: Average_CreditCard_Balance {
+        group_label: "Credit Usage"
+        description: "Average of (Total balance of open credit card trades verified in past 12 months: BC33S) for selected accounts"
+        type: average
+        sql: ${Overall_CreditCard_Balance} ;;
+    }
+
+    dimension: Overall_CreditCard_Limit {
+        group_label: "Credit Usage"
+        description: "Total credit line of open credit card trades verified in past 12 months: BC28S"
+        type: number
+        sql: case when (((${parsed_data}->>'00V71')::json->>'BC28S') < 0)  or (((${parsed_data}->>'00V71')::json->>'BC28S') = 999) then NULL else ((${parsed_data}->>'00V71')::json->>'BC28S') ;;
+    }
+
+    measure: Average_CreditCard_Limit {
+        group_label: "Credit Usage"
+        description: "Average of (Total credit line of open credit card trades verified in past 12 months: BC28S) for selected accounts"
+        type: average
+        sql: ${Overall_CreditCard_Limit} ;;
+    }
+
+
+
+# Performance
+    # public records
+    dimension: Number_of_Public_Record {
+        group_label: "Performance"
+        description: "Number of public records: G093S"
+        type: number
+        sql: case when (((${parsed_data}->>'00V71')::json->>'G093S') < 0)  or (((${parsed_data}->>'00V71')::json->>'G093S') = 999) then NULL else ((${parsed_data}->>'00V71')::json->>'G093S') ;;
+    }
+
+    measure: Average_Number_of_Public_Record {
+        group_label: "Performance"
+        description: "Average of (Number of public records: G093S) for selected accounts"
+        type: average
+        sql: ${Number_of_Public_Record} ;;
+    }
+
+    dimension: Number_of_Bankruptcy {
+        group_label: "Performance"
+        description: "Number of public record bankruptcies: G094S"
+        type: number
+        sql: case when (((${parsed_data}->>'00V71')::json->>'G094S') < 0)  or (((${parsed_data}->>'00V71')::json->>'G094S') = 999) then NULL else ((${parsed_data}->>'00V71')::json->>'G094S') ;;
+    }
+
+    measure: Average_Number_of_Bankruptcy {
+        group_label: "Performance"
+        description: "Average of (Number of public record bankruptcies: G094S) for selected accounts"
+        type: average
+        sql: ${Number_of_Bankruptcy} ;;
+    }
+
+    dimension: Number_of_Bankruptcy_Last_24_Month {
+        group_label: "Performance"
+        description: "Number of public record bankruptcies in past 24 months: G099S"
+        type: number
+        sql: case when (((${parsed_data}->>'00V71')::json->>'G099S') < 0)  or (((${parsed_data}->>'00V71')::json->>'G099S') = 999) then NULL else ((${parsed_data}->>'00V71')::json->>'G099S') ;;
+    }
+
+    measure: Average_Number_of_Bankruptcy_Last_24_Month {
+        group_label: "Performance"
+        description: "Average of (Number of public record bankruptcies in past 24 months: G099S) for selected accounts"
+        type: average
+        sql: ${Number_of_Bankruptcy_Last_24_Month} ;;
+    }
+
+    dimension: Month_Since_Newest_Bankruptcy {
+        group_label: "Performance"
+        description: "Months since most recent public record bankruptcy: S207S"
+        type: number
+        sql: case when (((${parsed_data}->>'00V71')::json->>'S207S') < 0)  or (((${parsed_data}->>'00V71')::json->>'S207S') = 999) then NULL else ((${parsed_data}->>'00V71')::json->>'S207S') ;;
+    }
+
+    # derogatory
+    dimension: Worst_Rating_CreditCard_Past_12_Month {
+        group_label: "Performance"
+        description: "Worst rating on credit card trades in past 12 months"
+        type: number
+        sql: case when (((${parsed_data}->>'00V71')::json->>'G300S') < 0)  or (((${parsed_data}->>'00V71')::json->>'G300S') = 999) then NULL else ((${parsed_data}->>'00V71')::json->>'G300S') ;;
+    }
+
+    dimension: Number_30_delq_Past_12_Month {
+        group_label: "Performance"
+        description: "Number of 30 days past due ratings in past 12 months: G001S"
+        type: number
+        sql: case when (((${parsed_data}->>'00V71')::json->>'G001S') < 0)  or (((${parsed_data}->>'00V71')::json->>'G001S') = 999) then NULL else ((${parsed_data}->>'00V71')::json->>'G001S') ;;
+    }
+
+    measure: Average_Number_30_delq_Past_12_Month {
+        group_label: "Performance"
+        description: "Average of (Number of 30 days past due ratings in past 12 months: G001S) for selected accounts"
+        type: average
+        sql: ${Number_30_delq_Past_12_Month} ;;
+    }
+
+    dimension: Number_60_delq_Past_12_Month {
+        group_label: "Performance"
+        description: "Number of 60 or more days past due ratings in past 12 months: G002B"
+        type: number
+        sql: case when (((${parsed_data}->>'00V71')::json->>'G002B') < 0)  or (((${parsed_data}->>'00V71')::json->>'G002B') = 999) then NULL else ((${parsed_data}->>'00V71')::json->>'G002B') ;;
+    }
+
+    measure: Average_Number_60_delq_Past_12_Month {
+        group_label: "Performance"
+        description: "Average of (Number of 60 or more days past due ratings in past 12 months: G002B) for selected accounts"
+        type: average
+        sql: ${Number_60_delq_Past_12_Month} ;;
+    }
+
+
+
+# Used for business rules
+    # read from TU report
+    dimension: open_bankruptcy {
+        group_label: "Approval Checks"
+        description: "Open bankruptcy: OPENBKC"
+        type: number
+        sql: case when (((parsed_data->>'00W63')::json->>'OPENBKC') < 0)  or (((parsed_data->>'00W63')::json->>'OPENBKC') = 999) then NULL else ((parsed_data->>'00W63')::json->>'OPENBKC') ;;
+    }
+
+    dimension: open_satisfactory_trades {
+        group_label: "Approval Checks"
+        description: "Number of currently open and satisfactory trades 6 months or older: AT24S"
+        type: number
+        sql: case when (((parsed_data->>'00V71')::json->>'AT24S') < 0)  or (((parsed_data->>'00V71')::json->>'AT24S') = 999) then NULL else ((parsed_data->>'00V71')::json->>'AT24S') ;;
+    }
+
+    dimension: number_of_public_records {
+        group_label: "Approval Checks"
+        description: "Number of public records: G093S"
+        type: number
+        sql: case when (((parsed_data->>'00V71')::json->>'G093S') < 0)  or (((parsed_data->>'00V71')::json->>'G093S') = 999) then NULL else ((parsed_data->>'00V71')::json->>'G093S') ;;
+    }
+
+    dimension: open_collections_accounts {
+        group_label: "Approval Checks"
+        description: "Number of third party collections with balance > $0: G215A"
+        type: number
+        sql: case when (((parsed_data->>'00V71')::json->>'G215A') < 0)  or (((parsed_data->>'00V71')::json->>'G215A') = 999) then NULL else ((parsed_data->>'00V71')::json->>'G215A') ;;
+    }
+
+    dimension: total_trades {
+        group_label: "Approval Checks"
+        description: "Number of trades: AT01S"
+        type: number
+        sql: case when (((parsed_data->>'00V71')::json->>'AT01S') < 0)  or (((parsed_data->>'00V71')::json->>'AT01S') = 999) then NULL else ((parsed_data->>'00V71')::json->>'AT01S') ;;
+    }
+
+    dimension: total_credit_inquires {
+        group_label: "Approval Checks"
+        description: "Number of deduped inquiries: G960S"
+        type: number
+        sql: case when (((parsed_data->>'00V71')::json->>'G960S') < 0)  or (((parsed_data->>'00V71')::json->>'G960S') = 999) then NULL else ((parsed_data->>'00V71')::json->>'G960S') ;;
+    }
+
+    dimension: credit_inquiries_last_6_months {
+        group_label: "Approval Checks"
+        description: "Number of deduped inquiries in past 6 months: G980S"
+        type: number
+        sql: case when (((parsed_data->>'00V71')::json->>'G980S') < 0)  or (((parsed_data->>'00V71')::json->>'G980S') = 999) then NULL else ((parsed_data->>'00V71')::json->>'G980S') ;;
+    }
+
+    dimension: credit_inquiries_last_12_months {
+        group_label: "Approval Checks"
+        description: "Number of deduped inquiries in past 12 months: G990S"
+        type: number
+        sql: case when (((parsed_data->>'00V71')::json->>'G990S') < 0)  or (((parsed_data->>'00V71')::json->>'G990S') = 999) then NULL else ((parsed_data->>'00V71')::json->>'G990S') ;;
+    }
+
+    dimension: collections_inquiries {
+        group_label: "Approval Checks"
+        description: "Number of collection inquiries: G231S"
+        type: number
+        sql: case when (((parsed_data->>'00V71')::json->>'G231S') < 0)  or (((parsed_data->>'00V71')::json->>'G231S') = 999) then NULL else ((parsed_data->>'00V71')::json->>'G231S') ;;
+    }
+
+    dimension: collections_inquiries_last_6_months {
+        group_label: "Approval Checks"
+        description: "Number of collection inquiries in past 6 months: G233S"
+        type: number
+        sql: case when (((parsed_data->>'00V71')::json->>'G233S') < 0)  or (((parsed_data->>'00V71')::json->>'G233S') = 999) then NULL else ((parsed_data->>'00V71')::json->>'G233S') ;;
+    }
+
+    dimension: bankruptcies_last_24_months {
+        group_label: "Approval Checks"
+        description: "Number of public record bankruptcies in past 24 months: G099S"
+        type: number
+        sql: case when (((parsed_data->>'00V71')::json->>'G099S') < 0)  or (((parsed_data->>'00V71')::json->>'G099S') = 999) then NULL else ((parsed_data->>'00V71')::json->>'G099S') ;;
+    }
+
+    dimension: count_bankruptcies {
+        group_label: "Approval Checks"
+        description: "Number of public record bankruptcies: G094S"
+        type: number
+        sql: case when (((parsed_data->>'00V71')::json->>'G094S') < 0)  or (((parsed_data->>'00V71')::json->>'G094S') = 999) then NULL else ((parsed_data->>'00V71')::json->>'G094S') ;;
+    }
+
+    dimension: total_amount_collections {
+        group_label: "Approval Checks"
+        description: "Total placement amount of third party collections: S064A"
+        type: number
+        sql: case when (((parsed_data->>'00V71')::json->>'S064A') < 0)  or (((parsed_data->>'00V71')::json->>'S064A') = 999) then NULL else ((parsed_data->>'00V71')::json->>'S064A') ;;
+    }
+
+    dimension: total_amount_non_medical_collections {
+        group_label: "Approval Checks"
+        description: "Total placement amount of non-medical third party collections: S064B"
+        type: number
+        sql: case when (((parsed_data->>'00V71')::json->>'S064B') < 0)  or (((parsed_data->>'00V71')::json->>'S064B') = 999) then NULL else ((parsed_data->>'00V71')::json->>'S064B') ;;
+    }
+
+    dimension: tax_liens {
+        group_label: "Approval Checks"
+        description: "Number of tax liens: S208S"
+        type: number
+        sql: case when (((parsed_data->>'00V71')::json->>'S208S') < 0)  or (((parsed_data->>'00V71')::json->>'S208S') = 999) then NULL else ((parsed_data->>'00V71')::json->>'S208S') ;;
+    }
+
+    dimension: months_since_most_recent_public_record_bankruptcy {
+        group_label: "Approval Checks"
+        description: "Months since most recent public record bankruptcy: S207S"
+        type: number
+        sql: case when (((parsed_data->>'00V71')::json->>'S207S') < 0)  or (((parsed_data->>'00V71')::json->>'S207S') = 999) then NULL else ((parsed_data->>'00V71')::json->>'S207S') ;;
+    }
+
+    dimension: age_oldest_trade_months {
+        group_label: "Approval Checks"
+        description: "Months since oldest trade opened: AT20S"
+        type: number
+        sql: case when (((parsed_data->>'00V71')::json->>'AT20S') < 0)  or (((parsed_data->>'00V71')::json->>'AT20S') = 999) then NULL else ((parsed_data->>'00V71')::json->>'AT20S') ;;
+    }
+
+    dimension: age_newest_trade_months {
+        group_label: "Approval Checks"
+        description: "Months since most recent trade opened: AT21S"
+        type: number
+        sql: case when (((parsed_data->>'00V71')::json->>'AT21S') < 0)  or (((parsed_data->>'00V71')::json->>'AT21S') = 999) then NULL else ((parsed_data->>'00V71')::json->>'AT21S') ;;
+    }
+
+    dimension: open_finance_installment_trades {
+        group_label: "Approval Checks"
+        description: "Number of open finance installment trades: FI02S"
+        type: number
+        sql: case when (((parsed_data->>'00V71')::json->>'FI02S') < 0)  or (((parsed_data->>'00V71')::json->>'FI02S') = 999) then NULL else ((parsed_data->>'00V71')::json->>'FI02S') ;;
+    }
+
+    dimension: months_since_most_recent_collections_inquiry {
+        group_label: "Approval Checks"
+        description: "Months since most recent collection inquiry: G104S"
+        type: number
+        sql: case when (((parsed_data->>'00V71')::json->>'G104S') < 0)  or (((parsed_data->>'00V71')::json->>'G104S') = 999) then NULL else ((parsed_data->>'00V71')::json->>'G104S') ;;
+    }
+
+    dimension: months_since_most_recent_credit_inquiry {
+        group_label: "Approval Checks"
+        description: "Months since most recent credit inquiry: G103S"
+        type: number
+        sql: case when (((parsed_data->>'00V71')::json->>'G103S') < 0)  or (((parsed_data->>'00V71')::json->>'G103S') = 999) then NULL else ((parsed_data->>'00V71')::json->>'G103S') ;;
+    }
+
+    dimension: total_balance_excluding_housing {
+        group_label: "Approval Checks"
+        description: "Total balance of all trades verified in past 12 months (excluding mortgage and home equity): AT101B"
+        type: number
+        sql: case when (((parsed_data->>'00V71')::json->>'AT101B') < 0)  or (((parsed_data->>'00V71')::json->>'AT101B') = 999) then NULL else ((parsed_data->>'00V71')::json->>'AT101B') ;;
+    }
+
+    dimension: total_credit_card_balance {
+        group_label: "Approval Checks"
+        description: "Total balance of all credit card trades verified in past 12 months: BC101S"
+        type: number
+        sql: case when (((parsed_data->>'00V71')::json->>'BC101S') < 0)  or (((parsed_data->>'00V71')::json->>'BC101S') = 999) then NULL else ((parsed_data->>'00V71')::json->>'BC101S') ;;
+    }
+
+    dimension: percentage_of_open_cc_with75p_util {
+        group_label: "Approval Checks"
+        description: "Percentage of open credit card trades > 75% of credit line verified in past 12 months: BC31S"
+        type: number
+        sql: case when (((parsed_data->>'00V71')::json->>'BC31S') < 0)  or (((parsed_data->>'00V71')::json->>'BC31S') = 999) then NULL else ((parsed_data->>'00V71')::json->>'BC31S') ;;
+    }
+
+    dimension: utilization_credit_card {
+        group_label: "Approval Checks"
+        description: "Utilization for open credit card trades verified in past 12 months: BC34S"
+        type: number
+        sql: case when (((parsed_data->>'00V71')::json->>'BC34S') < 0)  or (((parsed_data->>'00V71')::json->>'BC34S') = 999) then NULL else ((parsed_data->>'00V71')::json->>'BC34S') ;;
+    }
+
+    dimension: late30 {
+        group_label: "Approval Checks"
+        description: "Number of open trade lines (excluding student loans) which have a Last Payment Date in the last six (6) months and which have a 30-day or more past due current manner of payment: ATTR03"
+        type: number
+        sql: case when (((parsed_data->>'00W63')::json->>'ATTR03') < 0)  or (((parsed_data->>'00W63')::json->>'ATTR03') = 999) then NULL else ((parsed_data->>'00W63')::json->>'ATTR03') ;;
+    }
+
+    # derived fields
+    dimension: segment {
+        group_label: "Approval Checks"
+        description: "customer segment emerging/established"
+        type: number
+        sql: case when (${open_satisfactory_trades} >=2) and (${cd_last_decision.fico_score} >= 350) and (${cd_last_decision.fico_score} <= 850) then "established" else "emerging" ;;
+    }
+
+    dimension: rules_pass {
+        group_label: "Approval Checks"
+        description: "check whether passes business rules"
+        type: yesno
+        sql: case
+                when
+                    (created_at > '2017-12-18 21:00:00') and
+                    (count_bankruptcies > 1) or
+                    (total_credit_card_balance > 30000) or
+                    (total_amount_non_medical_collections > 5000) or
+                    (tax_liens > 0) or
+                    (months_since_most_recent_public_record_bankruptcy between 0 and 12) or
+                    (credit_inquiries_last_6_months > 10) or
+                    ((count_bankruptcies = 1) and (months_since_most_recent_public_record_bankruptcy < age_newest_trade_months)) then false
+                else
+                    case
+                        when segment = "established" then
+                        # established
+                            case
+                                when
+                                    (open_bankruptcy = 0) and
+                                    (late30 < 2) and
+                                    (fico_score > 549) then true
+                                else false
+                            end
+                        else
+                        # emerging
+                            case
+                                when
+                                    (total_trades > 0) and
+                                    (bankruptcies_last_24_months < 1) and
+                                    (open_collections_accounts < 1) and
+                                    (open_bankruptcy = 0) and
+                                    (late30 < 2) and
+                                    (fico_score > 549) then true
+                                else false
+                            end
+                end
+            end as rules_pass ;;
+    }
+
+    dimension: model_score_pass {
+        group_label: "Approval Checks"
+        description: "check model_score, pass if between 0 and 0.16"
+        type: yesno
+        sql: case when model_decline_score between 0 and 0.16 then true else false end as model_score_pass, ;;
+    }
+
+    dimension: expected_line {
+        group_label: "Approval Checks"
+        description: "check the expected credit line"
+        type: number
+        sql:  ;;
+    }

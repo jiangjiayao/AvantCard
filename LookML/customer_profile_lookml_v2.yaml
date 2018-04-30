@@ -1,0 +1,1594 @@
+###### finished version to put into looker
+
+
+
+
+#### credit_card_prod.model.lkml
+
+  join: transunion_characteristic_data {
+    relationship: one_to_one
+    sql_on: ${transunion_characteristic_data.transunion_credit_report_id}=${cd_last_decision.transunion_credit_report_id} ;;
+    fields: [
+            id, # age_of_oldest_tradeline, age_of_newest_tradeline,
+            experience_with_credit*,
+            credit_appetite*,
+            credit_usage*,
+            performance*,
+            approval_checks*
+    ]
+}
+
+
+
+
+# Experience With Credit
+set: experience_with_credit {
+    fields: [
+    # all tradelines
+        months_on_file, avg_months_on_file, max_months_on_file, min_months_on_file, median_months_on_file,
+        number_of_trades, avg_number_of_trades, max_number_of_trades, min_number_of_trades, median_number_of_trades,
+        months_since_oldest_trade_opened, avg_months_since_oldest_trade_opened, max_months_since_oldest_trade_opened, min_months_since_oldest_trade_opened, median_months_since_oldest_trade_opened,
+        months_since_newest_trade_opened, avg_months_since_newest_trade_opened, max_months_since_newest_trade_opened, min_months_since_newest_trade_opened, median_months_since_newest_trade_opened,
+    # credit cards
+        number_of_creditcard_trades, avg_number_of_creditcard_trades, max_number_of_creditcard_trades, min_number_of_creditcard_trades, median_number_of_creditcard_trades,
+        months_since_oldest_creditcard_trade_opened, avg_months_since_oldest_creditcard_trade_opened, max_months_since_oldest_creditcard_trade_opened, min_months_since_oldest_creditcard_trade_opened, median_months_since_oldest_creditcard_trade_opened,
+        months_since_newest_creditcard_trade_opened, avg_months_since_newest_creditcard_trade_opened, max_months_since_newest_creditcard_trade_opened, min_months_since_newest_creditcard_trade_opened, median_months_since_newest_creditcard_trade_opened
+    ]
+}
+
+# Credit Appetite
+set: credit_appetite {
+    fields: [
+    # Number of inquiries in the past
+        inquiries_past_6_months, avg_inquiries_past_6_months, max_inquiries_past_6_months, min_inquiries_past_6_months, median_inquiries_past_6_months,
+        inquiries_past_12_months, avg_inquiries_past_12_months, max_inquiries_past_12_months, min_inquiries_past_12_months, median_inquiries_past_12_months,
+        inquiries_past_24_months, avg_inquiries_past_24_months, max_inquiries_past_24_months, min_inquiries_past_24_months, median_inquiries_past_24_months,
+    # recent accounts/credit cards
+        trades_opened_past_3_months, avg_trades_opened_past_3_months, max_trades_opened_past_3_months, min_trades_opened_past_3_months, median_trades_opened_past_3_months,
+        trades_opened_past_6_months, avg_trades_opened_past_6_months, max_trades_opened_past_6_months, min_trades_opened_past_6_months, median_trades_opened_past_6_months,
+        creditcard_trades_opened_past_6_months, avg_creditcard_trades_opened_past_6_months, max_creditcard_trades_opened_past_6_months, min_creditcard_trades_opened_past_6_months, median_creditcard_trades_opened_past_6_months
+    ]
+}
+
+# Credit Usage
+set: credit_usage {
+    fields: [
+    # utilization of revolvers
+        utilization_of_revolving_trades, avg_utilization_of_revovling_trades, max_utilization_of_revovling_trades, min_utilization_of_revovling_trades, median_utilization_of_revovling_trades,
+    # utilization of credit cards
+        utilization_of_creditcard_trades, avg_utilization_of_creditcard_trades, max_utilization_of_creditcard_trades, min_utilization_of_creditcard_trades, median_utilization_of_creditcard_trades,
+    # overall balance & limit (including mortgage & home equity)
+        total_balance, avg_balance, max_balance, min_balance, median_balance,
+        total_limit, avg_limit, max_limit, min_limit, median_limit,
+    # overall balance & limit (without mortgage & home equity)
+        total_balance_without_mortgage_home_equity, avg_balance_without_mortgage_home_equity, max_balance_without_mortgage_home_equity, min_balance_without_mortgage_home_equity, median_balance_without_mortgage_home_equity,
+        total_limit_without_mortgage_home_equity, avg_limit_without_mortgage, max_limit_without_mortgage, min_limit_without_mortgage, median_limit_without_mortgage,
+    # number of cards, balance & limit for all cards
+        number_of_open_creditcard_trades, avg_number_of_open_creditcard_trades, max_number_of_open_creditcard_trades, min_number_of_open_creditcard_trades, median_number_of_open_creditcard_trades,
+        total_open_creditcard_trades_balance, avg_open_creditcard_trades_balance, max_open_creditcard_trades_balance, min_open_creditcard_trades_balance, median_open_creditcard_trades_balance,
+        total_open_creditcard_trades_limit, avg_open_creditcard_trades_limit, max_open_creditcard_trades_limit, min_open_creditcard_trades_limit, median_open_creditcard_trades_limit
+    ]
+}
+
+
+
+# Performance
+set: performance {
+    fields: [
+    # public records
+        number_of_public_records, avg_number_of_public_records, max_number_of_public_records, min_number_of_public_records, median_number_of_public_records,
+        number_of_public_record_bankruptcies, avg_number_of_public_record_bankruptcies, max_number_of_public_record_bankruptcies, min_number_of_public_record_bankruptcies, median_number_of_public_record_bankruptcies,
+        number_of_distinct_accounts_with_public_record_bankruptcies, total_number_of_distinct_accounts_selected, pct_of_distinct_accounts_with_public_record_bankruptcies,
+        number_of_public_record_bankruptcies_past_24_months, avg_number_of_public_record_bankruptcies_past_24_months, max_number_of_public_record_bankruptcies_past_24_months, min_number_of_public_record_bankruptcies_past_24_months, median_number_of_public_record_bankruptcies_past_24_months,
+        months_since_newest_public_record_bankruptcy, avg_months_since_newest_public_record_bankruptcy, max_months_since_newest_public_record_bankruptcy, min_months_since_newest_public_record_bankruptcy, median_months_since_newest_public_record_bankruptcy,
+    # derogatory
+        worst_rating_creditcard_trades_past_12_months, avg_worst_rating_creditcard_trades_past_12_months, max_worst_rating_creditcard_trades_past_12_months, min_worst_rating_creditcard_trades_past_12_months, median_worst_rating_creditcard_trades_past_12_months,
+        number_30_delq_past_12_months, avg_number_30_delq_past_12_months, max_number_30_delq_past_12_months, min_number_30_delq_past_12_months, median_number_30_delq_past_12_months,
+        number_of_distinct_accounts_with_30_delq_past_12_months, pct_of_distinct_accounts_with_30_delq_past_12_months,
+        number_60_delq_past_12_months, avg_number_60_delq_past_12_months, max_number_60_delq_past_12_months, min_number_60_delq_past_12_months, median_number_60_delq_past_12_months,
+        number_of_distinct_accounts_with_60_delq_past_12_months, pct_of_distinct_accounts_with_60_delq_past_12_months
+    ]
+}
+
+# Approval Checks
+set: approval_checks {
+    fields: [
+    # read directly from TU report
+        open_bankruptcy, open_satisfactory_trades, total_number_of_public_records, open_collections_accounts, total_trades, total_credit_inquires,
+        credit_inquiries_last_6_months, credit_inquiries_last_12_months, collections_inquiries, collections_inquiries_last_6_months, bankruptcies_last_24_months,
+        count_bankruptcies, total_amount_collections, total_amount_non_medical_collections, tax_liens, months_since_most_recent_public_record_bankruptcy,
+        age_oldest_trade_months, age_newest_trade_months, open_finance_installment_trades, months_since_most_recent_collections_inquiry, months_since_most_recent_credit_inquiry,
+        total_balance_excluding_housing, total_credit_card_balance, percentage_of_open_cc_with75p_util, utilization_credit_card, late30,
+    # derived fields
+        fail_new_rules
+    ]
+}
+
+
+
+
+# Experience With Credit
+  # all tradelines
+  dimension: months_on_file {
+    group_label: "Experience With Credit"
+    label: "G106S: Number of Months on File"
+    type: number
+    value_format_name: decimal_0
+    sql: case when (((${parsed_data}->>'00V71')::json->>'G106S')::numeric < 0)  or (((${parsed_data}->>'00V71')::json->>'G106S')::numeric = 999) then NULL else ((${parsed_data}->>'00V71')::json->>'G106S')::numeric end;;
+  }
+
+  measure: avg_months_on_file {
+    group_label: "Experience With Credit"
+    label: "G106S: Average Number of Months on File"
+    type: average
+    value_format_name: decimal_1
+    sql: ${months_on_file} ;;
+  }
+
+  measure: max_months_on_file {
+    group_label: "Experience With Credit"
+    label: "G106S: Maximum Number of Months on File"
+    type: max
+    value_format_name: decimal_1
+    sql: ${months_on_file} ;;
+  }
+
+  measure: min_months_on_file {
+    group_label: "Experience With Credit"
+    label: "G106S: Minimum Number of Months on File"
+    type: min
+    value_format_name: decimal_1
+    sql: ${months_on_file} ;;
+  }
+
+  measure: median_months_on_file {
+    group_label: "Experience With Credit"
+    label: "G106S: Median Number of Months on File"
+    type: median
+    value_format_name: decimal_1
+    sql: ${months_on_file} ;;
+  }
+
+  dimension: number_of_trades {
+    group_label: "Experience With Credit"
+    label: "AT01S: Number of Trades"
+    type: number
+    value_format_name: decimal_0
+    sql: case when (((${parsed_data}->>'00V71')::json->>'AT01S')::numeric < 0)  or (((${parsed_data}->>'00V71')::json->>'AT01S')::numeric = 999) then NULL else ((${parsed_data}->>'00V71')::json->>'AT01S')::numeric end;;
+  }
+
+  measure: avg_number_of_trades {
+    group_label: "Experience With Credit"
+    label: "AT01S: Average Number of Trades"
+    type: average
+    value_format_name: decimal_1
+    sql: ${number_of_trades} ;;
+  }
+
+  measure: max_number_of_trades {
+    group_label: "Experience With Credit"
+    label: "AT01S: Maximum Number of Trades"
+    type: max
+    value_format_name: decimal_1
+    sql: ${number_of_trades} ;;
+  }
+
+  measure: min_number_of_trades {
+    group_label: "Experience With Credit"
+    label: "AT01S: Minimum Number of Trades"
+    type: min
+    value_format_name: decimal_1
+    sql: ${number_of_trades} ;;
+  }
+
+  measure: median_number_of_trades {
+    group_label: "Experience With Credit"
+    label: "AT01S: Median Number of Trades"
+    type: median
+    value_format_name: decimal_1
+    sql: ${number_of_trades} ;;
+  }
+
+  dimension: months_since_oldest_trade_opened {
+    group_label: "Experience With Credit"
+    label: "AT20S: Months Since Oldest Trade Opened"
+    type: number
+    value_format_name: decimal_0
+    sql: case when (((${parsed_data}->>'00V71')::json->>'AT20S')::numeric < 0)  or (((${parsed_data}->>'00V71')::json->>'AT20S')::numeric = 999) then NULL else ((${parsed_data}->>'00V71')::json->>'AT20S')::numeric end;;
+  }
+
+  measure: avg_months_since_oldest_trade_opened {
+    group_label: "Experience With Credit"
+    label: "AT20S: Average Months Since Oldest Trade Opened"
+    type: average
+    value_format_name: decimal_1
+    sql: ${months_since_oldest_trade_opened} ;;
+  }
+
+  measure: max_months_since_oldest_trade_opened {
+    group_label: "Experience With Credit"
+    label: "AT20S: Maximum Months Since Oldest Trade Opened"
+    type: max
+    value_format_name: decimal_1
+    sql: ${months_since_oldest_trade_opened} ;;
+  }
+
+  measure: min_months_since_oldest_trade_opened {
+    group_label: "Experience With Credit"
+    label: "AT20S: Minimum Months Since Oldest Trade Opened"
+    type: min
+    value_format_name: decimal_1
+    sql: ${months_since_oldest_trade_opened} ;;
+  }
+
+  measure: median_months_since_oldest_trade_opened {
+    group_label: "Experience With Credit"
+    label: "AT20S: Median Months Since Oldest Trade Opened"
+    type: median
+    value_format_name: decimal_1
+    sql: ${months_since_oldest_trade_opened} ;;
+  }
+
+  dimension: months_since_newest_trade_opened {
+    group_label: "Experience With Credit"
+    label: "AT21S: Months Since Newest Trade Opened"
+    type: number
+    value_format_name: decimal_0
+    sql: case when (((${parsed_data}->>'00V71')::json->>'AT21S')::numeric < 0)  or (((${parsed_data}->>'00V71')::json->>'AT21S')::numeric = 999) then NULL else ((${parsed_data}->>'00V71')::json->>'AT21S')::numeric end;;
+  }
+
+  measure: avg_months_since_newest_trade_opened {
+    group_label: "Experience With Credit"
+    label: "AT21S: Average Months Since Newest Trade Opened"
+    type: average
+    value_format_name: decimal_1
+    sql: ${months_since_newest_trade_opened} ;;
+  }
+
+  measure: max_months_since_newest_trade_opened {
+    group_label: "Experience With Credit"
+    label: "AT21S: Maximum Months Since Newest Trade Opened"
+    type: max
+    value_format_name: decimal_1
+    sql: ${months_since_newest_trade_opened} ;;
+  }
+
+  measure: min_months_since_newest_trade_opened {
+    group_label: "Experience With Credit"
+    label: "AT21S: Minimum Months Since Newest Trade Opened"
+    type: min
+    value_format_name: decimal_1
+    sql: ${months_since_newest_trade_opened} ;;
+  }
+
+  measure: median_months_since_newest_trade_opened {
+    group_label: "Experience With Credit"
+    label: "AT21S: Median Months Since Newest Trade Opened"
+    type: median
+    value_format_name: decimal_1
+    sql: ${months_since_newest_trade_opened} ;;
+  }
+
+  # credit cards
+  dimension: number_of_creditcard_trades {
+    group_label: "Experience With Credit"
+    label: "BC01S: Number of Credit Card Trades"
+    description: "BC01S: Number of Credit Card Trades, Not Including Private Label Cards"
+    type: number
+    value_format_name: decimal_0
+    sql: case when (((${parsed_data}->>'00V71')::json->>'BC01S')::numeric < 0)  or (((${parsed_data}->>'00V71')::json->>'BC01S')::numeric = 999) then NULL else ((${parsed_data}->>'00V71')::json->>'BC01S')::numeric end;;
+  }
+
+  measure: avg_number_of_creditcard_trades {
+    group_label: "Experience With Credit"
+    label: "BC01S: Average Number of Credit Card Trades"
+    description: "BC01S: Average Number of Credit Card Trades, Not Including Private Label Cards"
+    type: average
+    value_format_name: decimal_1
+    sql: ${number_of_creditcard_trades} ;;
+  }
+
+  measure: max_number_of_creditcard_trades {
+    group_label: "Experience With Credit"
+    label: "BC01S: Maximum Number of Credit Card Trades"
+    description: "BC01S: Maximum Number of Credit Card Trades, Not Including Private Label Cards"
+    type: max
+    value_format_name: decimal_1
+    sql: ${number_of_creditcard_trades} ;;
+  }
+
+  measure: min_number_of_creditcard_trades {
+    group_label: "Experience With Credit"
+    label: "BC01S: Minimum Number of Credit Card Trades"
+    description: "BC01S: Minimum Number of Credit Card Trades, Not Including Private Label Cards"
+    type: min
+    value_format_name: decimal_1
+    sql: ${number_of_creditcard_trades} ;;
+  }
+
+  measure: median_number_of_creditcard_trades {
+    group_label: "Experience With Credit"
+    label: "BC01S: Median Number of Credit Card Trades"
+    description: "BC01S: Median Number of Credit Card Trades, Not Including Private Label Cards"
+    type: median
+    value_format_name: decimal_1
+    sql: ${number_of_creditcard_trades} ;;
+  }
+
+  dimension: months_since_oldest_creditcard_trade_opened {
+    group_label: "Experience With Credit"
+    label: "BC20S: Months Since Oldest Credit Card Trade Opened"
+    type: number
+    value_format_name: decimal_0
+    sql: case when (((${parsed_data}->>'00V71')::json->>'BC20S')::numeric < 0)  or (((${parsed_data}->>'00V71')::json->>'BC20S')::numeric = 999) then NULL else ((${parsed_data}->>'00V71')::json->>'BC20S')::numeric end;;
+  }
+
+  measure: avg_months_since_oldest_creditcard_trade_opened {
+    group_label: "Experience With Credit"
+    label: "BC20S: Average Months Since Oldest Credit Card Trade Opened"
+    type: average
+    value_format_name: decimal_1
+    sql: ${months_since_oldest_creditcard_trade_opened} ;;
+  }
+
+  measure: max_months_since_oldest_creditcard_trade_opened {
+    group_label: "Experience With Credit"
+    label: "BC20S: Maximum Months Since Oldest Credit Card Trade Opened"
+    type: max
+    value_format_name: decimal_1
+    sql: ${months_since_oldest_creditcard_trade_opened} ;;
+  }
+
+  measure: min_months_since_oldest_creditcard_trade_opened {
+    group_label: "Experience With Credit"
+    label: "BC20S: Minimum Months Since Oldest Credit Card Trade Opened"
+    type: min
+    value_format_name: decimal_1
+    sql: ${months_since_oldest_creditcard_trade_opened} ;;
+  }
+
+  measure: median_months_since_oldest_creditcard_trade_opened {
+    group_label: "Experience With Credit"
+    label: "BC20S: Median Months Since Oldest Credit Card Trade Opened"
+    type: median
+    value_format_name: decimal_1
+    sql: ${months_since_oldest_creditcard_trade_opened} ;;
+  }
+
+  dimension: months_since_newest_creditcard_trade_opened {
+    group_label: "Experience With Credit"
+    label: "BC21S: Months Since Newest Credit Card Trade Opened"
+    type: number
+    value_format_name: decimal_0
+    sql: case when (((${parsed_data}->>'00V71')::json->>'BC21S')::numeric < 0)  or (((${parsed_data}->>'00V71')::json->>'BC21S')::numeric = 999) then NULL else ((${parsed_data}->>'00V71')::json->>'BC21S')::numeric end;;
+  }
+
+  measure: avg_months_since_newest_creditcard_trade_opened {
+    group_label: "Experience With Credit"
+    label: "BC21S: Average Months Since Newest Credit Card Trade Opened"
+    type: average
+    value_format_name: decimal_1
+    sql: ${months_since_newest_creditcard_trade_opened} ;;
+  }
+
+  measure: max_months_since_newest_creditcard_trade_opened {
+    group_label: "Experience With Credit"
+    label: "BC21S: Maximum Months Since Newest Credit Card Trade Opened"
+    type: max
+    value_format_name: decimal_1
+    sql: ${months_since_newest_creditcard_trade_opened} ;;
+  }
+
+  measure: min_months_since_newest_creditcard_trade_opened {
+    group_label: "Experience With Credit"
+    label: "BC21S: Minimum Months Since Newest Credit Card Trade Opened"
+    type: min
+    value_format_name: decimal_1
+    sql: ${months_since_newest_creditcard_trade_opened} ;;
+  }
+
+  measure: median_months_since_newest_creditcard_trade_opened {
+    group_label: "Experience With Credit"
+    label: "BC21S: Median Months Since Newest Credit Card Trade Opened"
+    type: median
+    value_format_name: decimal_1
+    sql: ${months_since_newest_creditcard_trade_opened} ;;
+  }
+
+
+
+# Credit Appetite
+  # Number of inquiries in the past ...
+  dimension: inquiries_past_6_months {
+    group_label: "Credit Appetite"
+    label: "G980S: Number of Deduped Inquiries Past 6 Months"
+    type: number
+    value_format_name: decimal_0
+    sql: case when (((${parsed_data}->>'00V71')::json->>'G980S')::numeric < 0)  or (((${parsed_data}->>'00V71')::json->>'G980S')::numeric = 999) then NULL else ((${parsed_data}->>'00V71')::json->>'G980S')::numeric end;;
+  }
+
+  measure: avg_inquiries_past_6_months {
+    group_label: "Credit Appetite"
+    label: "G980S: Average Number of Deduped Inquiries Past 6 Months"
+    type: average
+    value_format_name: decimal_1
+    sql: ${inquiries_past_6_months} ;;
+  }
+
+  measure: max_inquiries_past_6_months {
+    group_label: "Credit Appetite"
+    label: "G980S: Maximum Number of Deduped Inquiries Past 6 Months"
+    type: max
+    value_format_name: decimal_1
+    sql: ${inquiries_past_6_months} ;;
+  }
+
+  measure: min_inquiries_past_6_months {
+    group_label: "Credit Appetite"
+    label: "G980S: Minimum Number of Deduped Inquiries Past 6 Months"
+    type: min
+    value_format_name: decimal_1
+    sql: ${inquiries_past_6_months} ;;
+  }
+
+  measure: median_inquiries_past_6_months {
+    group_label: "Credit Appetite"
+    label: "G980S: Median Number of Deduped Inquiries Past 6 Months"
+    type: median
+    value_format_name: decimal_1
+    sql: ${inquiries_past_6_months} ;;
+  }
+
+  dimension: inquiries_past_12_months {
+    group_label: "Credit Appetite"
+    label: "G990S: Number of Deduped Inquiries Past 12 Months"
+    type: number
+    value_format_name: decimal_0
+    sql: case when (((${parsed_data}->>'00V71')::json->>'G990S')::numeric < 0)  or (((${parsed_data}->>'00V71')::json->>'G990S')::numeric = 999) then NULL else ((${parsed_data}->>'00V71')::json->>'G990S')::numeric end;;
+  }
+
+  measure: avg_inquiries_past_12_months {
+    group_label: "Credit Appetite"
+    label: "G990S: Average Number of Deduped Inquiries Past 12 Months"
+    type: average
+    value_format_name: decimal_1
+    sql: ${inquiries_past_12_months} ;;
+  }
+
+  measure: max_inquiries_past_12_months {
+    group_label: "Credit Appetite"
+    label: "G990S: Maximum Number of Deduped Inquiries Past 12 Months"
+    type: max
+    value_format_name: decimal_1
+    sql: ${inquiries_past_12_months} ;;
+  }
+
+  measure: min_inquiries_past_12_months {
+    group_label: "Credit Appetite"
+    label: "G990S: Minimum Number of Deduped Inquiries Past 12 Months"
+    type: min
+    value_format_name: decimal_1
+    sql: ${inquiries_past_12_months} ;;
+  }
+
+  measure: median_inquiries_past_12_months {
+    group_label: "Credit Appetite"
+    label: "G990S: Median Number of Deduped Inquiries Past 12 Months"
+    type: median
+    value_format_name: decimal_1
+    sql: ${inquiries_past_12_months} ;;
+  }
+
+  dimension: inquiries_past_24_months {
+    group_label: "Credit Appetite"
+    label: "G960S: Number of Deduped Inquiries"
+    type: number
+    value_format_name: decimal_0
+    sql: case when (((${parsed_data}->>'00V71')::json->>'G960S')::numeric < 0)  or (((${parsed_data}->>'00V71')::json->>'G960S')::numeric = 999) then NULL else ((${parsed_data}->>'00V71')::json->>'G960S')::numeric end;;
+    #per stefan
+  }
+
+  measure: avg_inquiries_past_24_months {
+    group_label: "Credit Appetite"
+    label: "G960S: Average Number of Deduped Inquiries"
+    type: average
+    value_format_name: decimal_1
+    sql: ${inquiries_past_24_months} ;;
+  }
+
+  measure: max_inquiries_past_24_months {
+    group_label: "Credit Appetite"
+    label: "G960S: Maximum Number of Deduped Inquiries"
+    type: max
+    value_format_name: decimal_1
+    sql: ${inquiries_past_24_months} ;;
+  }
+
+  measure: min_inquiries_past_24_months {
+    group_label: "Credit Appetite"
+    label: "G960S: Minimum Number of Deduped Inquiries"
+    type: min
+    value_format_name: decimal_1
+    sql: ${inquiries_past_24_months} ;;
+  }
+
+  measure: median_inquiries_past_24_months {
+    group_label: "Credit Appetite"
+    label: "G960S: Median Number of Deduped Inquiries"
+    type: median
+    value_format_name: decimal_1
+    sql: ${inquiries_past_24_months} ;;
+  }
+
+  # recent accounts/credit cards
+  dimension: trades_opened_past_3_months {
+    group_label: "Credit Appetite"
+    label: "AT05: Number of Trades Opened Past 3 Months"
+    type: number
+    value_format_name: decimal_0
+    sql: case when (((${parsed_data}->>'00V71')::json->>'AT05')::numeric < 0)  or (((${parsed_data}->>'00V71')::json->>'AT05')::numeric = 999) then NULL else ((${parsed_data}->>'00V71')::json->>'AT05')::numeric end;;
+    ## per Stefan, but will check with him again
+  }
+
+  measure: avg_trades_opened_past_3_months {
+    group_label: "Credit Appetite"
+    label: "AT05: Average Number of Trades Opened Past 3 Months"
+    type: average
+    value_format_name: decimal_1
+    sql: ${trades_opened_past_3_months} ;;
+  }
+
+  measure: max_trades_opened_past_3_months {
+    group_label: "Credit Appetite"
+    label: "AT05: Maximum Number of Trades Opened Past 3 Months"
+    type: max
+    value_format_name: decimal_1
+    sql: ${trades_opened_past_3_months} ;;
+  }
+
+  measure: min_trades_opened_past_3_months {
+    group_label: "Credit Appetite"
+    label: "AT05: Minimum Number of Trades Opened Past 3 Months"
+    type: min
+    value_format_name: decimal_1
+    sql: ${trades_opened_past_3_months} ;;
+  }
+
+  measure: median_trades_opened_past_3_months {
+    group_label: "Credit Appetite"
+    label: "AT05: Median Number of Trades Opened Past 3 Months"
+    type: median
+    value_format_name: decimal_1
+    sql: ${trades_opened_past_3_months} ;;
+  }
+
+  dimension: trades_opened_past_6_months {
+    group_label: "Credit Appetite"
+    label: "AT06S: Number of Trades Opened Past 6 Months"
+    type: number
+    value_format_name: decimal_0
+    sql: case when (((${parsed_data}->>'00V71')::json->>'AT06S')::numeric < 0)  or (((${parsed_data}->>'00V71')::json->>'AT06S')::numeric = 999) then NULL else ((${parsed_data}->>'00V71')::json->>'AT06S')::numeric end;;
+  }
+
+  measure: avg_trades_opened_past_6_months {
+    group_label: "Credit Appetite"
+    label: "AT06S: Average Number of Trades Opened Past 6 Months"
+    type: average
+    value_format_name: decimal_1
+    sql: ${trades_opened_past_6_months} ;;
+  }
+
+  measure: max_trades_opened_past_6_months {
+    group_label: "Credit Appetite"
+    label: "AT06S: Maximum Number of Trades Opened Past 6 Months"
+    type: max
+    value_format_name: decimal_1
+    sql: ${trades_opened_past_6_months} ;;
+  }
+
+  measure: min_trades_opened_past_6_months {
+    group_label: "Credit Appetite"
+    label: "AT06S: Minimum Number of Trades Opened Past 6 Months"
+    type: min
+    value_format_name: decimal_1
+    sql: ${trades_opened_past_6_months} ;;
+  }
+
+  measure: median_trades_opened_past_6_months {
+    group_label: "Credit Appetite"
+    label: "AT06S: Median Number of Trades Opened Past 6 Months"
+    type: median
+    value_format_name: decimal_1
+    sql: ${trades_opened_past_6_months} ;;
+  }
+
+  dimension: creditcard_trades_opened_past_6_months {
+    group_label: "Credit Appetite"
+    label: "BC06S: Number of Credit Card Trades Opened Past 6 Months"
+    type: number
+    value_format_name: decimal_0
+    sql: case when (((${parsed_data}->>'00V71')::json->>'BC06S')::numeric < 0)  or (((${parsed_data}->>'00V71')::json->>'BC06S')::numeric = 999) then NULL else ((${parsed_data}->>'00V71')::json->>'BC06S')::numeric end;;
+  }
+
+  measure: avg_creditcard_trades_opened_past_6_months {
+    group_label: "Credit Appetite"
+    label: "BC06S: Average Number of Credit Card Trades Opened Past 6 Months"
+    type: average
+    value_format_name: decimal_1
+    sql: ${creditcard_trades_opened_past_6_months} ;;
+  }
+
+  measure: max_creditcard_trades_opened_past_6_months {
+    group_label: "Credit Appetite"
+    label: "BC06S: Maximum Number of Credit Card Trades Opened Past 6 Months"
+    type: max
+    value_format_name: decimal_1
+    sql: ${creditcard_trades_opened_past_6_months} ;;
+  }
+
+  measure: min_creditcard_trades_opened_past_6_months {
+    group_label: "Credit Appetite"
+    label: "BC06S: Minimum Number of Credit Card Trades Opened Past 6 Months"
+    type: min
+    value_format_name: decimal_1
+    sql: ${creditcard_trades_opened_past_6_months} ;;
+  }
+
+  measure: median_creditcard_trades_opened_past_6_months {
+    group_label: "Credit Appetite"
+    label: "BC06S: Median Number of Credit Card Trades Opened Past 6 Months"
+    type: median
+    value_format_name: decimal_1
+    sql: ${creditcard_trades_opened_past_6_months} ;;
+  }
+
+
+
+# Credit Usage
+  # Utilization of revolving trades
+  dimension: utilization_of_revolving_trades {
+    group_label: "Credit Usage"
+    label: "RE34S: Utilization for Open Revolving Trades Verified in Past 12 Months"
+    type: number
+    value_format_name: percent_2
+    sql: 0.01 * case when (((${parsed_data}->>'00V71')::json->>'RE34S')::numeric < 0)  or (((${parsed_data}->>'00V71')::json->>'RE34S')::numeric = 999) then NULL else ((${parsed_data}->>'00V71')::json->>'RE34S')::numeric end;;
+  }
+
+  measure: avg_utilization_of_revovling_trades {
+    group_label: "Credit Usage"
+    label: "RE34S: Average Utilization for Open Revolving Trades Verified in Past 12 Months"
+    type: average
+    value_format_name: percent_2
+    sql: ${utilization_of_revolving_trades} ;;
+  }
+
+  measure: max_utilization_of_revovling_trades {
+    group_label: "Credit Usage"
+    label: "RE34S: Maximum Utilization for Open Revolving Trades Verified in Past 12 Months"
+    type: max
+    value_format_name: percent_2
+    sql: ${utilization_of_revolving_trades} ;;
+  }
+
+  measure: min_utilization_of_revovling_trades {
+    group_label: "Credit Usage"
+    label: "RE34S: Minimum Utilization for Open Revolving Trades Verified in Past 12 Months"
+    type: min
+    value_format_name: percent_2
+    sql: ${utilization_of_revolving_trades} ;;
+  }
+
+  measure: median_utilization_of_revovling_trades {
+    group_label: "Credit Usage"
+    label: "RE34S: Median Utilization for Open Revolving Trades Verified in Past 12 Months"
+    type: median
+    value_format_name: percent_2
+    sql: ${utilization_of_revolving_trades} ;;
+  }
+
+  # utilization of credit cards
+  dimension: utilization_of_creditcard_trades {
+    group_label: "Credit Usage"
+    label: "BC34S: Utilization for Open Credit Card Trades Verified in Past 12 Months"
+    type: number
+    value_format_name: percent_2
+    sql: 0.01 * case when (((${parsed_data}->>'00V71')::json->>'BC34S')::numeric < 0)  or (((${parsed_data}->>'00V71')::json->>'BC34S')::numeric = 999) then NULL else ((${parsed_data}->>'00V71')::json->>'BC34S')::numeric end;;
+  }
+
+  measure: avg_utilization_of_creditcard_trades {
+    group_label: "Credit Usage"
+    label: "BC34S: Average Utilization for Open Credit Card Trades Verified in Past 12 Months"
+    type: average
+    value_format_name: percent_2
+    sql: ${utilization_of_creditcard_trades} ;;
+  }
+
+  measure: max_utilization_of_creditcard_trades {
+    group_label: "Credit Usage"
+    label: "BC34S: Maximum Utilization for Open Credit Card Trades Verified in Past 12 Months"
+    type: max
+    value_format_name: percent_2
+    sql: ${utilization_of_creditcard_trades} ;;
+  }
+
+  measure: min_utilization_of_creditcard_trades {
+    group_label: "Credit Usage"
+    label: "BC34S: Minimum Utilization for Open Credit Card Trades Verified in Past 12 Months"
+    type: min
+    value_format_name: percent_2
+    sql: ${utilization_of_creditcard_trades} ;;
+  }
+
+  measure: median_utilization_of_creditcard_trades {
+    group_label: "Credit Usage"
+    label: "BC34S: Median Utilization for Open Credit Card Trades Verified in Past 12 Months"
+    type: median
+    value_format_name: percent_2
+    sql: ${utilization_of_creditcard_trades} ;;
+  }
+
+  # overall balance & limit (including mortgage & home equity)
+  dimension:  total_balance {
+    group_label: "Credit Usage"
+    label: "AT33A: Total Balance of Open Trades Verified in Past 12 Months"
+    type: number
+    value_format_name: usd_0
+    sql: case when (((${parsed_data}->>'00V71')::json->>'AT33A')::numeric < 0)  or (((${parsed_data}->>'00V71')::json->>'AT33A')::numeric = 999) then NULL else ((${parsed_data}->>'00V71')::json->>'AT33A')::numeric end;;
+  }
+
+  measure: avg_balance {
+    group_label: "Credit Usage"
+    label: "AT33A: Average Total Balance of Open Trades Verified in Past 12 Months"
+    type: average
+    value_format_name: usd_0
+    sql: ${total_balance} ;;
+  }
+
+  measure: max_balance {
+    group_label: "Credit Usage"
+    label: "AT33A: Maximum Total Balance of Open Trades Verified in Past 12 Months"
+    type: max
+    value_format_name: usd_0
+    sql: ${total_balance} ;;
+  }
+
+  measure: min_balance {
+    group_label: "Credit Usage"
+    label: "AT33A: Minimum Total Balance of Open Trades Verified in Past 12 Months"
+    type: min
+    value_format_name: usd_0
+    sql: ${total_balance} ;;
+  }
+
+  measure: median_balance {
+    group_label: "Credit Usage"
+    label: "AT33A: Median Total Balance of Open Trades Verified in Past 12 Months"
+    type: median
+    value_format_name: usd_0
+    sql: ${total_balance} ;;
+  }
+
+  dimension: total_limit {
+    group_label: "Credit Usage"
+    label: "AT28A: Total Credit Line of Open Trades Verified in Past 12 Months"
+    type: number
+    value_format_name: usd_0
+    sql: case when (((${parsed_data}->>'00V71')::json->>'AT28A')::numeric < 0)  or (((${parsed_data}->>'00V71')::json->>'AT28A')::numeric = 999) then NULL else ((${parsed_data}->>'00V71')::json->>'AT28A')::numeric end;;
+  }
+
+  measure: avg_limit {
+    group_label: "Credit Usage"
+    label: "AT28A: Average Total Credit Line of Open Trades Verified in Past 12 Months"
+    type: average
+    value_format_name: usd_0
+    sql: ${total_limit} ;;
+  }
+
+  measure: max_limit {
+    group_label: "Credit Usage"
+    label: "AT28A: Maximum Total Credit Line of Open Trades Verified in Past 12 Months"
+    type: max
+    value_format_name: usd_0
+    sql: ${total_limit} ;;
+  }
+
+  measure: min_limit {
+    group_label: "Credit Usage"
+    label: "AT28A: Minimum Total Credit Line of Open Trades Verified in Past 12 Months"
+    type: min
+    value_format_name: usd_0
+    sql: ${total_limit} ;;
+  }
+
+  measure: median_limit {
+    group_label: "Credit Usage"
+    label: "AT28A: Median Total Credit Line of Open Trades Verified in Past 12 Months"
+    type: median
+    value_format_name: usd_0
+    sql: ${total_limit} ;;
+  }
+
+  # overall balance & limit (without mortgage & home equity)
+  dimension: total_balance_without_mortgage_home_equity {
+    group_label: "Credit Usage"
+    label: "AT33B: Total Balance of Open Trades Without Mortgage and Home Equity Verified in Past 12 Months"
+    type: number
+    value_format_name: usd_0
+    sql: case when (((${parsed_data}->>'00V71')::json->>'AT33B')::numeric < 0)  or (((${parsed_data}->>'00V71')::json->>'AT33B')::numeric = 999) then NULL else ((${parsed_data}->>'00V71')::json->>'AT33B')::numeric end;;
+  }
+
+  measure: avg_balance_without_mortgage_home_equity {
+    group_label: "Credit Usage"
+    label: "AT33B: Average Total Balance of Open Trades Without Mortgage and Home Equity Verified in Past 12 Months"
+    type: average
+    value_format_name: usd_0
+    sql: ${total_balance_without_mortgage_home_equity} ;;
+  }
+
+  measure: max_balance_without_mortgage_home_equity {
+    group_label: "Credit Usage"
+    label: "AT33B: Maximum Total Balance of Open Trades Without Mortgage and Home Equity Verified in Past 12 Months"
+    type: max
+    value_format_name: usd_0
+    sql: ${total_balance_without_mortgage_home_equity} ;;
+  }
+
+  measure: min_balance_without_mortgage_home_equity {
+    group_label: "Credit Usage"
+    label: "AT33B: Minimum Total Balance of Open Trades Without Mortgage and Home Equity Verified in Past 12 Months"
+    type: min
+    value_format_name: usd_0
+    sql: ${total_balance_without_mortgage_home_equity} ;;
+  }
+
+  measure: median_balance_without_mortgage_home_equity {
+    group_label: "Credit Usage"
+    label: "AT33B: Median Total Balance of Open Trades Without Mortgage and Home Equity Verified in Past 12 Months"
+    type: median
+    value_format_name: usd_0
+    sql: ${total_balance_without_mortgage_home_equity} ;;
+  }
+
+  dimension: total_limit_without_mortgage_home_equity {
+    group_label: "Credit Usage"
+    label: "AT28B: Total Credit Line of Open Trades Without Mortgage and Home Equity Verified in Past 12 Months"
+    type: number
+    value_format_name: usd_0
+    sql: case when (((${parsed_data}->>'00V71')::json->>'AT28B')::numeric < 0)  or (((${parsed_data}->>'00V71')::json->>'AT28B')::numeric = 999) then NULL else ((${parsed_data}->>'00V71')::json->>'AT28B')::numeric end;;
+  }
+
+  measure: avg_limit_without_mortgage {
+    group_label: "Credit Usage"
+    label: "AT28B: Average Total Credit Line of Open Trades Without Mortgage and Home Equity Verified in Past 12 Months"
+    type: average
+    value_format_name: usd_0
+    sql: ${total_limit_without_mortgage_home_equity} ;;
+  }
+
+  measure: max_limit_without_mortgage {
+    group_label: "Credit Usage"
+    label: "AT28B: Maximum Total Credit Line of Open Trades Without Mortgage and Home Equity Verified in Past 12 Months"
+    type: max
+    value_format_name: usd_0
+    sql: ${total_limit_without_mortgage_home_equity} ;;
+  }
+
+  measure: min_limit_without_mortgage {
+    group_label: "Credit Usage"
+    label: "AT28B: Minimum Total Credit Line of Open Trades Without Mortgage and Home Equity Verified in Past 12 Months"
+    type: min
+    value_format_name: usd_0
+    sql: ${total_limit_without_mortgage_home_equity} ;;
+  }
+
+  measure: median_limit_without_mortgage {
+    group_label: "Credit Usage"
+    label: "AT28B: Median Total Credit Line of Open Trades Without Mortgage and Home Equity Verified in Past 12 Months"
+    type: median
+    value_format_name: usd_0
+    sql: ${total_limit_without_mortgage_home_equity} ;;
+  }
+
+  # number of cards, balance & limit for all cards
+  dimension: number_of_open_creditcard_trades {
+    group_label: "Credit Usage"
+    label: "BC02S: Number of Open Credit Card Trades"
+    type: number
+    value_format_name: decimal_0
+    sql: case when (((${parsed_data}->>'00V71')::json->>'BC02S')::numeric < 0)  or (((${parsed_data}->>'00V71')::json->>'BC02S')::numeric = 999) then NULL else ((${parsed_data}->>'00V71')::json->>'BC02S')::numeric end;;
+  }
+
+  measure: avg_number_of_open_creditcard_trades {
+    group_label: "Credit Usage"
+    label: "BC02S: Average Number of Open Credit Card Trades"
+    type: average
+    value_format_name: decimal_1
+    sql: ${number_of_open_creditcard_trades} ;;
+  }
+
+  measure: max_number_of_open_creditcard_trades {
+    group_label: "Credit Usage"
+    label: "BC02S: Maximum Number of Open Credit Card Trades"
+    type: max
+    value_format_name: decimal_1
+    sql: ${number_of_open_creditcard_trades} ;;
+  }
+
+  measure: min_number_of_open_creditcard_trades {
+    group_label: "Credit Usage"
+    label: "BC02S: Minimum Number of Open Credit Card Trades"
+    type: min
+    value_format_name: decimal_1
+    sql: ${number_of_open_creditcard_trades} ;;
+  }
+
+  measure: median_number_of_open_creditcard_trades {
+    group_label: "Credit Usage"
+    label: "BC02S: Median Number of Open Credit Card Trades"
+    type: median
+    value_format_name: decimal_1
+    sql: ${number_of_open_creditcard_trades} ;;
+  }
+
+  dimension: total_open_creditcard_trades_balance {
+    group_label: "Credit Usage"
+    label: "BC33S: Total Balance of Open Credit Card Trades Verified in Past 12 Months"
+    type: number
+    value_format_name: usd_0
+    sql: case when (((${parsed_data}->>'00V71')::json->>'BC33S')::numeric < 0)  or (((${parsed_data}->>'00V71')::json->>'BC33S')::numeric = 999) then NULL else ((${parsed_data}->>'00V71')::json->>'BC33S')::numeric end;;
+  }
+
+  measure: avg_open_creditcard_trades_balance {
+    group_label: "Credit Usage"
+    label: "BC33S: Average Total Credit Card Balance of Open Credit Card Trades Verified in Past 12 Months"
+    type: average
+    value_format_name: usd_0
+    sql: ${total_open_creditcard_trades_balance} ;;
+  }
+
+  measure: max_open_creditcard_trades_balance {
+    group_label: "Credit Usage"
+    label: "BC33S: Maximum Total Credit Card Balance of Open Credit Card Trades Verified in Past 12 Months"
+    type: max
+    value_format_name: usd_0
+    sql: ${total_open_creditcard_trades_balance} ;;
+  }
+
+  measure: min_open_creditcard_trades_balance {
+    group_label: "Credit Usage"
+    label: "BC33S: Minimum Total Credit Card Balance of Open Credit Card Trades Verified in Past 12 Months"
+    type: min
+    value_format_name: usd_0
+    sql: ${total_open_creditcard_trades_balance} ;;
+  }
+
+  measure: median_open_creditcard_trades_balance {
+    group_label: "Credit Usage"
+    label: "BC33S: Median Total Credit Card Balance of Open Credit Card Trades Verified in Past 12 Months"
+    type: median
+    value_format_name: usd_0
+    sql: ${total_open_creditcard_trades_balance} ;;
+  }
+
+  dimension: total_open_creditcard_trades_limit {
+    group_label: "Credit Usage"
+    label: "BC28S: Total Credit Line of Open Credit Card Trades Verified in Past 12 Months"
+    type: number
+    value_format_name: usd_0
+    sql: case when (((${parsed_data}->>'00V71')::json->>'BC28S')::numeric < 0)  or (((${parsed_data}->>'00V71')::json->>'BC28S')::numeric = 999) then NULL else ((${parsed_data}->>'00V71')::json->>'BC28S')::numeric end;;
+  }
+
+  measure: avg_open_creditcard_trades_limit {
+    group_label: "Credit Usage"
+    label: "BC28S: Average Total Credit Line of Open Credit Card Trades Verified in Past 12 Months"
+    type: average
+    value_format_name: usd_0
+    sql: ${total_open_creditcard_trades_limit} ;;
+  }
+
+  measure: max_open_creditcard_trades_limit {
+    group_label: "Credit Usage"
+    label: "BC28S: Maximum Total Credit Line of Open Credit Card Trades Verified in Past 12 Months"
+    type: max
+    value_format_name: usd_0
+    sql: ${total_open_creditcard_trades_limit} ;;
+  }
+
+  measure: min_open_creditcard_trades_limit {
+    group_label: "Credit Usage"
+    label: "BC28S: Minimum Total Credit Line of Open Credit Card Trades Verified in Past 12 Months"
+    type: min
+    value_format_name: usd_0
+    sql: ${total_open_creditcard_trades_limit} ;;
+  }
+
+  measure: median_open_creditcard_trades_limit {
+    group_label: "Credit Usage"
+    label: "BC28S: Median Total Credit Line of Open Credit Card Trades Verified in Past 12 Months"
+    type: median
+    value_format_name: usd_0
+    sql: ${total_open_creditcard_trades_limit} ;;
+  }
+
+
+
+# Performance
+  # public records
+  dimension: number_of_public_records {
+    group_label: "Performance"
+    label: "G093S: Number of Public Records"
+    type: number
+    value_format_name: decimal_0
+    sql: case when (((${parsed_data}->>'00V71')::json->>'G093S')::numeric < 0)  or (((${parsed_data}->>'00V71')::json->>'G093S')::numeric = 999) then NULL else ((${parsed_data}->>'00V71')::json->>'G093S')::numeric end;;
+  }
+
+  measure: avg_number_of_public_records {
+    group_label: "Performance"
+    label: "G093S: Average Number of Public Records"
+    type: average
+    value_format_name: decimal_1
+    sql: ${number_of_public_records} ;;
+  }
+
+  measure: max_number_of_public_records {
+    group_label: "Performance"
+    label: "G093S: Maximum Number of Public Records"
+    type: max
+    value_format_name: decimal_1
+    sql: ${number_of_public_records} ;;
+  }
+
+  measure: min_number_of_public_records {
+    group_label: "Performance"
+    label: "G093S: Minimum Number of Public Records"
+    type: min
+    value_format_name: decimal_1
+    sql: ${number_of_public_records} ;;
+  }
+
+  measure: median_number_of_public_records {
+    group_label: "Performance"
+    label: "G093S: Median Number of Public Records"
+    type: median
+    value_format_name: decimal_1
+    sql: ${number_of_public_records} ;;
+  }
+
+  dimension: number_of_public_record_bankruptcies {
+    group_label: "Performance"
+    label: "G094S: Number of Public Record Bankruptcies"
+    type: number
+    value_format_name: decimal_0
+    sql: case when (((${parsed_data}->>'00V71')::json->>'G094S')::numeric < 0)  or (((${parsed_data}->>'00V71')::json->>'G094S')::numeric = 999) then NULL else ((${parsed_data}->>'00V71')::json->>'G094S')::numeric end;;
+  }
+
+  measure: avg_number_of_public_record_bankruptcies {
+    group_label: "Performance"
+    label: "G094S: Average Number of Public Record Bankruptcies"
+    type: average
+    value_format_name: decimal_1
+    sql: ${number_of_public_record_bankruptcies} ;;
+  }
+
+  measure: max_number_of_public_record_bankruptcies {
+    group_label: "Performance"
+    label: "G094S: Maximum Number of Public Record Bankruptcies"
+    type: max
+    value_format_name: decimal_1
+    sql: ${number_of_public_record_bankruptcies} ;;
+  }
+
+  measure: min_number_of_public_record_bankruptcies {
+    group_label: "Performance"
+    label: "G094S: Minimum Number of Public Record Bankruptcies"
+    type: min
+    value_format_name: decimal_1
+    sql: ${number_of_public_record_bankruptcies} ;;
+  }
+
+  measure: median_number_of_public_record_bankruptcies {
+    group_label: "Performance"
+    label: "G094S: Median Number of Public Record Bankruptcies"
+    type: median
+    value_format_name: decimal_1
+    sql: ${number_of_public_record_bankruptcies} ;;
+  }
+
+  measure: number_of_distinct_accounts_with_public_record_bankruptcies {
+    group_label: "Performance"
+    label: "G094S: Number of Distinct Accounts with Public Record Bankruptcies"
+    type: count_distinct
+    value_format_name: decimal_0
+    sql: ${transunion_credit_report_id} ;;
+    filters: {
+      field: number_of_public_record_bankruptcies
+      value: ">0"
+    }
+  }
+
+  measure: total_number_of_distinct_accounts_selected {
+    group_label: "Performance"
+    label: "Number of Distinct Accounts Selected"
+    type: count_distinct
+    value_format_name: decimal_0
+    sql: ${transunion_credit_report_id} ;;
+  }
+
+  measure: pct_of_distinct_accounts_with_public_record_bankruptcies {
+    group_label: "Performance"
+    label: "G094S: Percentage of Distinct Accounts with Public Record Bankruptcies"
+    type: number
+    value_format_name: percent_2
+    sql: 1.0 * ${number_of_distinct_accounts_with_public_record_bankruptcies} / ${total_number_of_distinct_accounts_selected} ;;
+  }
+
+  dimension: number_of_public_record_bankruptcies_past_24_months {
+    group_label: "Performance"
+    label: "G099S: Number of Public Record Bankruptcies in Past 24 Months"
+    type: number
+    value_format_name: decimal_0
+    sql: case when (((${parsed_data}->>'00V71')::json->>'G099S')::numeric < 0)  or (((${parsed_data}->>'00V71')::json->>'G099S')::numeric = 999) then NULL else ((${parsed_data}->>'00V71')::json->>'G099S')::numeric end;;
+  }
+
+  measure: avg_number_of_public_record_bankruptcies_past_24_months {
+    group_label: "Performance"
+    label: "G099S: Average Number of Public Record Bankruptcies in Past 24 Months"
+    type: average
+    value_format_name: decimal_1
+    sql: ${number_of_public_record_bankruptcies_past_24_months} ;;
+  }
+
+  measure: max_number_of_public_record_bankruptcies_past_24_months {
+    group_label: "Performance"
+    label: "G099S: Maximum Number of Public Record Bankruptcies in Past 24 Months"
+    type: max
+    value_format_name: decimal_1
+    sql: ${number_of_public_record_bankruptcies_past_24_months} ;;
+  }
+
+  measure: min_number_of_public_record_bankruptcies_past_24_months {
+    group_label: "Performance"
+    label: "G099S: Minimum Number of Public Record Bankruptcies in Past 24 Months"
+    type: min
+    value_format_name: decimal_1
+    sql: ${number_of_public_record_bankruptcies_past_24_months} ;;
+  }
+
+  measure: median_number_of_public_record_bankruptcies_past_24_months {
+    group_label: "Performance"
+    label: "G099S: Median Number of Public Record Bankruptcies in Past 24 Months"
+    type: median
+    value_format_name: decimal_1
+    sql: ${number_of_public_record_bankruptcies_past_24_months} ;;
+  }
+
+  dimension: months_since_newest_public_record_bankruptcy {
+    group_label: "Performance"
+    label: "S207S: Months Since Most Recent Public Record Bankruptcy"
+    type: number
+    value_format_name: decimal_0
+    sql: case when (((${parsed_data}->>'00V71')::json->>'S207S')::numeric < 0)  or (((${parsed_data}->>'00V71')::json->>'S207S')::numeric = 999) then NULL else ((${parsed_data}->>'00V71')::json->>'S207S')::numeric end;;
+  }
+
+  measure: avg_months_since_newest_public_record_bankruptcy {
+    group_label: "Performance"
+    label: "S207S: Average Number of Months Since Most Recent Public Record Bankruptcy"
+    type: average
+    value_format_name: decimal_1
+    sql: ${months_since_newest_public_record_bankruptcy} ;;
+  }
+
+  measure: max_months_since_newest_public_record_bankruptcy {
+    group_label: "Performance"
+    label: "S207S: Maximum Number of Months Since Most Recent Public Record Bankruptcy"
+    type: max
+    value_format_name: decimal_1
+    sql: ${months_since_newest_public_record_bankruptcy} ;;
+  }
+
+  measure: min_months_since_newest_public_record_bankruptcy {
+    group_label: "Performance"
+    label: "S207S: Minimum Number of Months Since Most Recent Public Record Bankruptcy"
+    type: min
+    value_format_name: decimal_1
+    sql: ${months_since_newest_public_record_bankruptcy} ;;
+  }
+
+  measure: median_months_since_newest_public_record_bankruptcy {
+    group_label: "Performance"
+    label: "S207S: Median Number of Months Since Most Recent Public Record Bankruptcy"
+    type: median
+    value_format_name: decimal_1
+    sql: ${months_since_newest_public_record_bankruptcy} ;;
+  }
+
+  # derogatory
+  dimension: worst_rating_creditcard_trades_past_12_months {
+    group_label: "Performance"
+    label: "G300S: Worst Rating on Credit Card Trades in Past 12 Months"
+    type: number
+    value_format_name: decimal_0
+    sql: case when (((${parsed_data}->>'00V71')::json->>'G300S')::numeric < 0)  or (((${parsed_data}->>'00V71')::json->>'G300S')::numeric = 999) then NULL else ((${parsed_data}->>'00V71')::json->>'G300S')::numeric end;;
+  }
+
+  measure: avg_worst_rating_creditcard_trades_past_12_months {
+    group_label: "Performance"
+    label: "G300S: Average of Worst Rating on Credit Card Trades in Past 12 Months"
+    type: average
+    value_format_name: decimal_1
+    sql: ${worst_rating_creditcard_trades_past_12_months} ;;
+  }
+
+  measure: max_worst_rating_creditcard_trades_past_12_months {
+    group_label: "Performance"
+    label: "G300S: Maximum of Worst Rating on Credit Card Trades in Past 12 Months"
+    type: max
+    value_format_name: decimal_1
+    sql: ${worst_rating_creditcard_trades_past_12_months} ;;
+  }
+
+  measure: min_worst_rating_creditcard_trades_past_12_months {
+    group_label: "Performance"
+    label: "G300S: Minimum of Worst Rating on Credit Card Trades in Past 12 Months"
+    type: min
+    value_format_name: decimal_1
+    sql: ${worst_rating_creditcard_trades_past_12_months} ;;
+  }
+
+  measure: median_worst_rating_creditcard_trades_past_12_months {
+    group_label: "Performance"
+    label: "G300S: Median of Worst Rating on Credit Card Trades in Past 12 Months"
+    type: median
+    value_format_name: decimal_1
+    sql: ${worst_rating_creditcard_trades_past_12_months} ;;
+  }
+
+  dimension: number_30_delq_past_12_months {
+    group_label: "Performance"
+    label: "G001S: Number of 30 Days Past Due Ratings in Past 12 Months"
+    type: number
+    value_format_name: decimal_0
+    sql: case when (((${parsed_data}->>'00V71')::json->>'G001S')::numeric < 0)  or (((${parsed_data}->>'00V71')::json->>'G001S')::numeric = 999) then NULL else ((${parsed_data}->>'00V71')::json->>'G001S')::numeric end;;
+  }
+
+  measure: avg_number_30_delq_past_12_months {
+    group_label: "Performance"
+    label: "G001S: Average Number of 30 Days Past Due Ratings in Past 12 Months"
+    type: average
+    value_format_name: decimal_1
+    sql: ${number_30_delq_past_12_months} ;;
+  }
+
+  measure: max_number_30_delq_past_12_months {
+    group_label: "Performance"
+    label: "G001S: Maximum Number of 30 Days Past Due Ratings in Past 12 Months"
+    type: max
+    value_format_name: decimal_1
+    sql: ${number_30_delq_past_12_months} ;;
+  }
+
+  measure: min_number_30_delq_past_12_months {
+    group_label: "Performance"
+    label: "G001S: Minimum Number of 30 Days Past Due Ratings in Past 12 Months"
+    type: min
+    value_format_name: decimal_1
+    sql: ${number_30_delq_past_12_months} ;;
+  }
+
+  measure: median_number_30_delq_past_12_months {
+    group_label: "Performance"
+    label: "G001S: Median Number of 30 Days Past Due Ratings in Past 12 Months"
+    type: median
+    value_format_name: decimal_1
+    sql: ${number_30_delq_past_12_months} ;;
+  }
+
+  measure: number_of_distinct_accounts_with_30_delq_past_12_months {
+    group_label: "Performance"
+    label: "G001S: Number of Distinct Accounts with 30 Days Past Due Ratings in Past 12 Months"
+    type: count_distinct
+    value_format_name: decimal_0
+    sql: ${transunion_credit_report_id} ;;
+    filters: {
+      field: number_30_delq_past_12_months
+      value: ">0"
+    }
+  }
+
+  measure: pct_of_distinct_accounts_with_30_delq_past_12_months {
+    group_label: "Performance"
+    label: "G001S: Percentage of Distinct Accounts with 30 Days Past Due Ratings in Past 12 Months"
+    type: number
+    value_format_name: percent_2
+    sql: 1.0 * ${number_of_distinct_accounts_with_30_delq_past_12_months} / ${total_number_of_distinct_accounts_selected} ;;
+  }
+
+  dimension: number_60_delq_past_12_months {
+    group_label: "Performance"
+    label: "G002B: Number of 60 or More Days Past Due Ratings in Past 12 Months"
+    type: number
+    value_format_name: decimal_0
+    sql: case when (((${parsed_data}->>'00V71')::json->>'G002B')::numeric < 0)  or (((${parsed_data}->>'00V71')::json->>'G002B')::numeric = 999) then NULL else ((${parsed_data}->>'00V71')::json->>'G002B')::numeric end;;
+  }
+
+  measure: avg_number_60_delq_past_12_months {
+    group_label: "Performance"
+    label: "G002B: Average Number of 60 or More Days Past Due Ratings in Past 12 Months"
+    type: average
+    value_format_name: decimal_1
+    sql: ${number_60_delq_past_12_months} ;;
+  }
+
+  measure: max_number_60_delq_past_12_months {
+    group_label: "Performance"
+    label: "G002B: Maximum Number of 60 or More Days Past Due Ratings in Past 12 Months"
+    type: max
+    value_format_name: decimal_1
+    sql: ${number_60_delq_past_12_months} ;;
+  }
+
+  measure: min_number_60_delq_past_12_months {
+    group_label: "Performance"
+    label: "G002B: Minimum Number of 60 or More Days Past Due Ratings in Past 12 Months"
+    type: min
+    value_format_name: decimal_1
+    sql: ${number_60_delq_past_12_months} ;;
+  }
+
+  measure: median_number_60_delq_past_12_months {
+    group_label: "Performance"
+    label: "G002B: Median Number of 60 or More Days Past Due Ratings in Past 12 Months"
+    type: median
+    value_format_name: decimal_1
+    sql: ${number_60_delq_past_12_months} ;;
+  }
+
+  measure: number_of_distinct_accounts_with_60_delq_past_12_months {
+    group_label: "Performance"
+    label: "G002B: Number of Distinct Accounts with 60 Days Past Due Ratings in Past 12 Months"
+    type: count_distinct
+    value_format_name: decimal_0
+    sql: ${transunion_credit_report_id} ;;
+    filters: {
+      field: number_60_delq_past_12_months
+      value: ">0"
+    }
+  }
+
+  measure: pct_of_distinct_accounts_with_60_delq_past_12_months {
+    group_label: "Performance"
+    label: "G002B: Percentage of Distinct Accounts with 60 Days Past Due Ratings in Past 12 Months"
+    type: number
+    value_format_name: percent_2
+    sql: 1.0 * ${number_of_distinct_accounts_with_60_delq_past_12_months} / ${total_number_of_distinct_accounts_selected} ;;
+  }
+
+
+
+# Used for business rules
+  # read from TU report
+  dimension: open_bankruptcy {
+    group_label: "Approval Checks"
+    label: "OPENBKC: Open Bankruptcy"
+    type: number
+    value_format_name: decimal_0
+    sql: case when (((${parsed_data}->>'00W63')::json->>'OPENBKC')::numeric < 0)  or (((${parsed_data}->>'00W63')::json->>'OPENBKC')::numeric = 999) then NULL else ((parsed_data->>'00W63')::json->>'OPENBKC')::numeric end;;
+  }
+
+  dimension: open_satisfactory_trades {
+    group_label: "Approval Checks"
+    label: "AT24S: Number of Currently Open and Satisfactory Trades 6 Months or Older"
+    type: number
+    value_format_name: decimal_0
+    sql: case when (((${parsed_data}->>'00V71')::json->>'AT24S')::numeric < 0)  or (((${parsed_data}->>'00V71')::json->>'AT24S')::numeric = 999) then NULL else ((parsed_data->>'00V71')::json->>'AT24S')::numeric end;;
+  }
+
+  dimension: total_number_of_public_records {
+    group_label: "Approval Checks"
+    label: "G093S: Total Number of Public Records"
+    type: number
+    value_format_name: decimal_0
+    sql: case when (((${parsed_data}->>'00V71')::json->>'G093S')::numeric < 0)  or (((${parsed_data}->>'00V71')::json->>'G093S')::numeric = 999) then NULL else ((parsed_data->>'00V71')::json->>'G093S')::numeric end;;
+  }
+
+  dimension: open_collections_accounts {
+    group_label: "Approval Checks"
+    label: " G215A: Number of Third Party Collections with Balance > $0"
+    type: number
+    value_format_name: decimal_0
+    sql: case when (((${parsed_data}->>'00V71')::json->>'G215A')::numeric < 0)  or (((${parsed_data}->>'00V71')::json->>'G215A')::numeric = 999) then NULL else ((parsed_data->>'00V71')::json->>'G215A')::numeric end;;
+  }
+
+  dimension: total_trades {
+    group_label: "Approval Checks"
+    label: "AT01S: Number of Trades"
+    type: number
+    value_format_name: decimal_0
+    sql: case when (((${parsed_data}->>'00V71')::json->>'AT01S')::numeric < 0)  or (((${parsed_data}->>'00V71')::json->>'AT01S')::numeric = 999) then NULL else ((parsed_data->>'00V71')::json->>'AT01S')::numeric end;;
+  }
+
+  dimension: total_credit_inquires {
+    group_label: "Approval Checks"
+    label: "G960S: Number of Deduped Inquiries"
+    type: number
+    value_format_name: decimal_0
+    sql: case when (((${parsed_data}->>'00V71')::json->>'G960S')::numeric < 0)  or (((${parsed_data}->>'00V71')::json->>'G960S')::numeric = 999) then NULL else ((parsed_data->>'00V71')::json->>'G960S')::numeric end;;
+  }
+
+  dimension: credit_inquiries_last_6_months {
+    group_label: "Approval Checks"
+    label: "G980S: Number of Deduped Inquiries Past 6 Months"
+    type: number
+    value_format_name: decimal_0
+    sql: case when (((${parsed_data}->>'00V71')::json->>'G980S')::numeric < 0)  or (((${parsed_data}->>'00V71')::json->>'G980S')::numeric = 999) then NULL else ((parsed_data->>'00V71')::json->>'G980S')::numeric end;;
+  }
+
+  dimension: credit_inquiries_last_12_months {
+    group_label: "Approval Checks"
+    label: "G990S: Number of Deduped Inquiries Past 12 Months"
+    type: number
+    value_format_name: decimal_0
+    sql: case when (((${parsed_data}->>'00V71')::json->>'G990S')::numeric < 0)  or (((${parsed_data}->>'00V71')::json->>'G990S')::numeric = 999) then NULL else ((parsed_data->>'00V71')::json->>'G990S')::numeric end;;
+  }
+
+  dimension: collections_inquiries {
+    group_label: "Approval Checks"
+    label: "G231S: Number of Collection Inquiries"
+    type: number
+    value_format_name: decimal_0
+    sql: case when (((${parsed_data}->>'00V71')::json->>'G231S')::numeric < 0)  or (((${parsed_data}->>'00V71')::json->>'G231S')::numeric = 999) then NULL else ((parsed_data->>'00V71')::json->>'G231S')::numeric end;;
+  }
+
+  dimension: collections_inquiries_last_6_months {
+    group_label: "Approval Checks"
+    label: "G233S: Number of Collection Inquiries in Past 6 Months"
+    type: number
+    value_format_name: decimal_0
+    sql: case when (((${parsed_data}->>'00V71')::json->>'G233S')::numeric < 0)  or (((${parsed_data}->>'00V71')::json->>'G233S')::numeric = 999) then NULL else ((parsed_data->>'00V71')::json->>'G233S')::numeric end;;
+  }
+
+  dimension: bankruptcies_last_24_months {
+    group_label: "Approval Checks"
+    label: "G099S: Number of Public Record Bankruptcies in Past 24 Months"
+    type: number
+    value_format_name: decimal_0
+    sql: case when (((${parsed_data}->>'00V71')::json->>'G099S')::numeric < 0)  or (((${parsed_data}->>'00V71')::json->>'G099S')::numeric = 999) then NULL else ((parsed_data->>'00V71')::json->>'G099S')::numeric end;;
+  }
+
+  dimension: count_bankruptcies {
+    group_label: "Approval Checks"
+    label: "G094S: Number of Public Record Bankruptcies"
+    type: number
+    value_format_name: decimal_0
+    sql: case when (((${parsed_data}->>'00V71')::json->>'G094S')::numeric < 0)  or (((${parsed_data}->>'00V71')::json->>'G094S')::numeric = 999) then NULL else ((parsed_data->>'00V71')::json->>'G094S')::numeric end;;
+  }
+
+  dimension: total_amount_collections {
+    group_label: "Approval Checks"
+    label: "S064A: Total Placement Amount of Third Party Collections"
+    type: number
+    value_format_name: usd_0
+    sql: case when (((${parsed_data}->>'00V71')::json->>'S064A')::numeric < 0)  or (((${parsed_data}->>'00V71')::json->>'S064A')::numeric = 999) then NULL else ((parsed_data->>'00V71')::json->>'S064A')::numeric end;;
+  }
+
+  dimension: total_amount_non_medical_collections {
+    group_label: "Approval Checks"
+    label: "S064B: Total Placement Amount of Non-medical Third Party Collections"
+    type: number
+    value_format_name: usd_0
+    sql: case when (((${parsed_data}->>'00V71')::json->>'S064B')::numeric < 0)  or (((${parsed_data}->>'00V71')::json->>'S064B')::numeric = 999) then NULL else ((parsed_data->>'00V71')::json->>'S064B')::numeric end;;
+  }
+
+  dimension: tax_liens {
+    group_label: "Approval Checks"
+    label: "S208S: Number of Tax Liens"
+    type: number
+    value_format_name: decimal_0
+    sql: case when (((${parsed_data}->>'00V71')::json->>'S208S')::numeric < 0)  or (((${parsed_data}->>'00V71')::json->>'S208S')::numeric = 999) then NULL else ((parsed_data->>'00V71')::json->>'S208S')::numeric end;;
+  }
+
+  dimension: months_since_most_recent_public_record_bankruptcy {
+    group_label: "Approval Checks"
+    label: "S207S: Months Since Most Recent Public Record Bankruptcy"
+    type: number
+    value_format_name: decimal_0
+    sql: case when (((${parsed_data}->>'00V71')::json->>'S207S')::numeric < 0)  or (((${parsed_data}->>'00V71')::json->>'S207S')::numeric = 999) then NULL else ((parsed_data->>'00V71')::json->>'S207S')::numeric end;;
+  }
+
+  dimension: age_oldest_trade_months {
+    group_label: "Approval Checks"
+    label: "AT20S: Months Since Oldest Trade Opened"
+    type: number
+    value_format_name: decimal_0
+    sql: case when (((${parsed_data}->>'00V71')::json->>'AT20S')::numeric < 0)  or (((${parsed_data}->>'00V71')::json->>'AT20S')::numeric = 999) then NULL else ((parsed_data->>'00V71')::json->>'AT20S')::numeric end;;
+  }
+
+  dimension: age_newest_trade_months {
+    group_label: "Approval Checks"
+    label: "AT21S: Months Since Newest Trade Opened"
+    type: number
+    value_format_name: decimal_0
+    sql: case when (((${parsed_data}->>'00V71')::json->>'AT21S')::numeric < 0)  or (((${parsed_data}->>'00V71')::json->>'AT21S')::numeric = 999) then NULL else ((parsed_data->>'00V71')::json->>'AT21S')::numeric end;;
+  }
+
+  dimension: open_finance_installment_trades {
+    group_label: "Approval Checks"
+    label: "FI02S: Number of Open Finance Installment Trades"
+    type: number
+    value_format_name: decimal_0
+    sql: case when (((${parsed_data}->>'00V71')::json->>'FI02S')::numeric < 0)  or (((${parsed_data}->>'00V71')::json->>'FI02S')::numeric = 999) then NULL else ((parsed_data->>'00V71')::json->>'FI02S')::numeric end;;
+  }
+
+  dimension: months_since_most_recent_collections_inquiry {
+    group_label: "Approval Checks"
+    label: "G104S: Months Since Most Recent Collection Inquiry"
+    type: number
+    value_format_name: decimal_0
+    sql: case when (((${parsed_data}->>'00V71')::json->>'G104S')::numeric < 0)  or (((${parsed_data}->>'00V71')::json->>'G104S')::numeric = 999) then NULL else ((parsed_data->>'00V71')::json->>'G104S')::numeric end;;
+  }
+
+  dimension: months_since_most_recent_credit_inquiry {
+    group_label: "Approval Checks"
+    label: "G103S: Months Since Most Recent Credit Inquiry"
+    type: number
+    value_format_name: decimal_0
+    sql: case when (((${parsed_data}->>'00V71')::json->>'G103S')::numeric < 0)  or (((${parsed_data}->>'00V71')::json->>'G103S')::numeric = 999) then NULL else ((parsed_data->>'00V71')::json->>'G103S')::numeric end;;
+  }
+
+  dimension: total_balance_excluding_housing {
+    group_label: "Approval Checks"
+    label: "AT101B: Total Balance of All Trades Verified in Past 12 Months Excluding Mortgage and Home Equity"
+    type: number
+    value_format_name: usd_0
+    sql: case when (((${parsed_data}->>'00V71')::json->>'AT101B')::numeric < 0)  or (((${parsed_data}->>'00V71')::json->>'AT101B')::numeric = 999) then NULL else ((parsed_data->>'00V71')::json->>'AT101B')::numeric end;;
+  }
+
+  dimension: total_credit_card_balance {
+    group_label: "Approval Checks"
+    label: "BC101S: Total Balance of All Credit Card Trades Verified in Past 12 Months"
+    type: number
+    value_format_name: usd_0
+    sql: case when (((${parsed_data}->>'00V71')::json->>'BC101S')::numeric < 0)  or (((${parsed_data}->>'00V71')::json->>'BC101S')::numeric = 999) then NULL else ((parsed_data->>'00V71')::json->>'BC101S')::numeric end;;
+  }
+
+  dimension: percentage_of_open_cc_with75p_util {
+    group_label: "Approval Checks"
+    label: "BC31S: Percentage of Open Credit Card Trades > 75% of Credit Line Verified in Past 12 Months"
+    type: number
+    value_format_name: percent_2
+    sql: 0.01 * case when (((${parsed_data}->>'00V71')::json->>'BC31S')::numeric < 0)  or (((${parsed_data}->>'00V71')::json->>'BC31S')::numeric = 999) then NULL else ((parsed_data->>'00V71')::json->>'BC31S')::numeric end;;
+  }
+
+  dimension: utilization_credit_card {
+    group_label: "Approval Checks"
+    label: "BC34S: Utilization for Open Credit Card Trades Verified in Past 12 Months"
+    type: number
+    value_format_name: percent_2
+    sql: 0.01 * case when (((${parsed_data}->>'00V71')::json->>'BC34S')::numeric < 0)  or (((${parsed_data}->>'00V71')::json->>'BC34S')::numeric = 999) then NULL else ((parsed_data->>'00V71')::json->>'BC34S')::numeric end;;
+  }
+
+  dimension: late30 {
+    group_label: "Approval Checks"
+    label: "ATTR03: 30 Days Past Due for Last Payment Date falls in Last 6 Months"
+    description: "ATTR03: Number of open trade lines excluding student loans which have a Last Payment Date in the last six (6) months and which have a 30-day or more past due current manner of payment"
+    type: number
+    value_format_name: decimal_0
+    sql: case when (((${parsed_data}->>'00W63')::json->>'ATTR03')::numeric < 0)  or (((${parsed_data}->>'00W63')::json->>'ATTR03')::numeric = 999) then NULL else ((parsed_data->>'00W63')::json->>'ATTR03')::numeric end;;
+  }
+
+  dimension: fail_new_rules {
+    group_label: "Approval Checks"
+    label: "Fail Under New Rules"
+    type: yesno
+    sql: case
+            when
+                (${count_bankruptcies} > 1) or
+                (${total_credit_card_balance} > 30000) or
+                (${total_amount_non_medical_collections} > 5000) or
+                (${tax_liens} > 0) or
+                (${months_since_most_recent_public_record_bankruptcy} is not null and ${months_since_most_recent_public_record_bankruptcy} < 12) or
+                (${credit_inquiries_last_6_months} > 10) or
+                ((${count_bankruptcies} = 1) and (${months_since_most_recent_public_record_bankruptcy} < ${age_newest_trade_months})) then true
+        else false
+        end;;
+  }
