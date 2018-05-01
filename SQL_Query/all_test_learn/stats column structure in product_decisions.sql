@@ -223,3 +223,85 @@ line
 	}
 
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+-- checking which accounts have adjusted credit lines
+
+with ttable as (
+select
+	pd.customer_id,
+	-- apr
+	pd.stats -> 'apr' -> 'inputs' -> 'spread' -> 'inputs' ->> 'pricing_strategy_id' as pricing_strategy_id,
+	pd.stats -> 'apr' -> 'inputs' -> 'spread' ->> 'output' as interest_rate,
+
+	pd.stats -> 'apr' -> 'inputs' -> 'prime_rate' ->> 'inputs' as prime_rate_in,
+	pd.stats -> 'apr' -> 'inputs' -> 'prime_rate' ->> 'output' as prime_rate,
+
+	pd.stats -> 'apr' ->> 'output' as apr,
+
+	-- fees
+	pd.stats -> 'fees' -> 'inputs' -> 'annual_membership_fee' -> 'inputs' ->> 'pricing_strategy_id' as pricing_strategy_id_2,
+	pd.stats -> 'fees' -> 'inputs' -> 'annual_membership_fee' ->> 'output' as amf,
+
+	pd.stats -> 'fees' ->> 'output' as fees_out,
+
+	-- line
+	pd.stats -> 'line' -> 'inputs' -> 'initial_credit_line' -> 'inputs' ->> 'fico_score' as fico_score,
+	pd.stats -> 'line' -> 'inputs' -> 'initial_credit_line' -> 'inputs' ->> 'model_score' as model_score,
+	pd.stats -> 'line' -> 'inputs' -> 'initial_credit_line' -> 'inputs' ->> 'vantage_3_0_score' as vantage3_score,
+	pd.stats -> 'line' -> 'inputs' -> 'initial_credit_line' ->> 'output' as initial_credit_line,
+
+	pd.stats -> 'line' -> 'inputs' -> 'maximum_line_amount' -> 'inputs' ->> 'dti_ratio' as dti_ratio,
+
+	round(
+	((pd.stats -> 'line' -> 'inputs' -> 'maximum_line_amount' -> 'inputs' -> 'debt_for_dti' ->> 'output')::numeric + GREATEST(25, 0.04 * (pd.stats -> 'line' ->> 'output')::numeric))
+	/
+	(nullif((pd.stats -> 'line' -> 'inputs' -> 'maximum_line_amount' -> 'inputs' -> 'debt_for_dti' -> 'inputs' -> 'monthly_housing_expense' -> 'inputs' ->> 'net_income')::numeric, 0)), 4
+	) as DTI,
+
+	pd.stats -> 'line' -> 'inputs' -> 'maximum_line_amount' -> 'inputs' -> 'debt_for_dti' -> 'inputs' -> 'monthly_housing_expense' -> 'inputs' ->> 'net_income' as monthly_income,
+	pd.stats -> 'line' -> 'inputs' -> 'maximum_line_amount' -> 'inputs' -> 'debt_for_dti' -> 'inputs' -> 'monthly_housing_expense' -> 'inputs' ->> 'rent_or_own' as rent_or_own,
+	pd.stats -> 'line' -> 'inputs' -> 'maximum_line_amount' -> 'inputs' -> 'debt_for_dti' -> 'inputs' -> 'monthly_housing_expense' -> 'inputs' ->> 'considered_owning' as considered_owning,
+	pd.stats -> 'line' -> 'inputs' -> 'maximum_line_amount' -> 'inputs' -> 'debt_for_dti' -> 'inputs' -> 'monthly_housing_expense' -> 'inputs' ->> 'expense_as_if_owning' as expense_as_if_owning,
+	pd.stats -> 'line' -> 'inputs' -> 'maximum_line_amount' -> 'inputs' -> 'debt_for_dti' -> 'inputs' -> 'monthly_housing_expense' -> 'inputs' ->> 'customer_address_rent_or_own' as address_rent_or_own,
+	pd.stats -> 'line' -> 'inputs' -> 'maximum_line_amount' -> 'inputs' -> 'debt_for_dti' -> 'inputs' -> 'monthly_housing_expense' -> 'inputs' ->> 'customer_address_monthly_housing_payment' as monthly_housing_payment,
+	pd.stats -> 'line' -> 'inputs' -> 'maximum_line_amount' -> 'inputs' -> 'debt_for_dti' -> 'inputs' -> 'monthly_housing_expense' ->> 'output' as monthly_debt,
+
+	pd.stats -> 'line' -> 'inputs' -> 'maximum_line_amount' -> 'inputs' -> 'debt_for_dti' -> 'inputs' ->> 'amount_monthly_mortgage_payments' as monthly_mortgage_payment,
+
+	pd.stats -> 'line' -> 'inputs' -> 'maximum_line_amount' -> 'inputs' -> 'debt_for_dti' -> 'inputs' ->> 'imputed_amount_monthly_minimum_payments' as imputed_monthly_min_payment,
+
+	pd.stats -> 'line' -> 'inputs' -> 'maximum_line_amount' -> 'inputs' -> 'debt_for_dti' ->> 'output' as monthly_debt,
+
+	pd.stats -> 'line' -> 'inputs' -> 'maximum_line_amount' -> 'inputs' ->> 'monthly_net_income' as monthly_income_2,
+	pd.stats -> 'line' -> 'inputs' -> 'maximum_line_amount' -> 'inputs' ->> 'min_assumed_monthly_payment' as min_assumed_monthly_payment,
+	pd.stats -> 'line' -> 'inputs' -> 'maximum_line_amount' -> 'inputs' ->> 'policy_initial_credit_line_amounts' as policy_initial_credit_line,
+
+	pd.stats -> 'line' -> 'inputs' -> 'maximum_line_amount' ->> 'output' as max_line,
+
+	pd.stats -> 'line' -> 'inputs' ->> 'policy_initial_credit_line_amounts' as initial_amount,
+
+	pd.stats -> 'line' ->> 'output' as credit_line
+from
+	product_decisions pd
+left join
+	customer_applications ca on pd.credit_decision_id = ca.credit_decision_id
+left join
+	credit_card_accounts cca on ca.uuid = cca.customer_application_uuid
+where
+	cca.status = 'issued'
+order by dti desc
+)
+
+select * from ttable where initial_credit_line <> credit_line
